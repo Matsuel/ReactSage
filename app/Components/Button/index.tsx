@@ -9,13 +9,16 @@ import { styles } from './Button.style';
 interface ButtonProps extends PressableProps {
     variant?: 'default' | 'primary' | 'transparent'
     content: string
+    onPress?: () => void
 }
 
 const Button = ({
     variant = 'default',
     content,
+    onPress,
     ...props
 }: ButtonProps) => {
+
 
     const [fontsLoaded] = useFonts({
         Outfit_700Bold,
@@ -24,7 +27,7 @@ const Button = ({
     const scaleAnim = useRef(new Animated.Value(1)).current;
 
     const handlePress = () => {
-        
+
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
         Animated.sequence([
@@ -39,7 +42,9 @@ const Button = ({
                 bounciness: 8,
                 useNativeDriver: true,
             }),
+
         ]).start();
+        if (onPress) onPress();
     };
 
     return (
