@@ -19,6 +19,10 @@ const Button = ({
     ...props
 }: ButtonProps) => {
 
+    if (props.disabled && props.disabled === true) {
+        variant = 'primary'
+    }
+
 
     const [fontsLoaded] = useFonts({
         Outfit_700Bold,
