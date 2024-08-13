@@ -36,7 +36,7 @@ export const UserInactivityProvider = ({ children }: any) => {
     }
 
     const recordStartTime = async () => {
-        SyncStorage.set('startTime', Date.now())
+        // SyncStorage.set('startTime', Date.now())
     }
 
 
