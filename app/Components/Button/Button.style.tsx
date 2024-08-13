@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
         color: '#fff',
     },
     primary: {
-        backgroundColor: '#007AFF',
+        backgroundColor: '#d8dce2',
         color: '#fff',
     },
     transparent: {
