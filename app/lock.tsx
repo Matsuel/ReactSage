@@ -6,6 +6,8 @@ import * as LocalAuthentication from 'expo-local-authentication'
 import FaceId from './assets/FaceId'
 import BackSpace from './assets/BackSpace'
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated'
+import Button from './Components/Button'
+import LeftArrow from './assets/LeftArrow'
 
 const inactive = () => {
   const [code, setCode] = useState<number[]>([])
@@ -34,7 +36,7 @@ const inactive = () => {
   const onBiometricPress = async () => {
     const { success } = await LocalAuthentication.authenticateAsync()
     if (success) {
-      router.push('home')
+      router.replace('/')
     } else {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
     }
@@ -45,6 +47,7 @@ const inactive = () => {
 
   useEffect(() => {
     if (code.length === 6) {
+      // voir pour intéragir avec la view d'index i pour chaque view de [i] faire une vibration et changer la couleur en vert ou en rouge
       if (code.join('') === '123456') {
         setCode([])
         router.push('home')
@@ -63,13 +66,13 @@ const inactive = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Bienvenue, Matsuel</Text>
+      <Text style={styles.title}>Entrez votre code PIN</Text>
 
       <Animated.View style={[styles.viewCode, styleToApply]}>
         {codeLength.map((_, index) => (
           <View
             key={index}
-            style={[styles.codeEmpty, { backgroundColor: code[index] ? "#fff" : "#202020" }]}
+            style={[styles.codeEmpty, { backgroundColor: code[index] >= 0 ? "#fff" : "#202020" }]}
           />
         ))}
       </Animated.View>
@@ -77,8 +80,8 @@ const inactive = () => {
       <View style={styles.numbers}>
         <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
           {[1, 2, 3].map((number) => (
-            <TouchableOpacity onPress={() => onNumberPress(number)} style={styles.buttonNumber}>
-              <Text key={number} style={styles.number}>
+            <TouchableOpacity onPress={() => onNumberPress(number)} style={styles.buttonNumber} key={number}>
+              <Text style={styles.number}>
                 {number}
               </Text>
             </TouchableOpacity>
@@ -86,8 +89,8 @@ const inactive = () => {
         </View>
         <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
           {[4, 5, 6].map((number) => (
-            <TouchableOpacity onPress={() => onNumberPress(number)} style={styles.buttonNumber}>
-              <Text key={number} style={styles.number}>
+            <TouchableOpacity onPress={() => onNumberPress(number)} style={styles.buttonNumber} key={number}>
+              <Text style={styles.number}>
                 {number}
               </Text>
             </TouchableOpacity>
@@ -95,8 +98,8 @@ const inactive = () => {
         </View>
         <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
           {[7, 8, 9].map((number) => (
-            <TouchableOpacity onPress={() => onNumberPress(number)} style={styles.buttonNumber}>
-              <Text key={number} style={styles.number}>
+            <TouchableOpacity onPress={() => onNumberPress(number)} style={styles.buttonNumber} key={number}>
+              <Text style={styles.number}>
                 {number}
               </Text>
             </TouchableOpacity>
@@ -108,7 +111,7 @@ const inactive = () => {
             <FaceId />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => onNumberPress(0)} key={0} style={styles.buttonNumber}>
-            <Text key={0} style={styles.number}>
+            <Text style={styles.number}>
               {0}
             </Text>
           </TouchableOpacity>
@@ -116,6 +119,10 @@ const inactive = () => {
             {code.length > 0 && <BackSpace />}
           </TouchableOpacity>
         </View>
+      </View>
+
+      <View style={styles.goBackBtn} >
+        <Button icon={<LeftArrow color='#fff' />} onPress={() => router.push('login')} />
       </View>
 
     </SafeAreaView>
@@ -129,6 +136,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     paddingLeft: "5%",
+    paddingRight: "5%",
     backgroundColor: '#000',
     alignItems: 'center',
   },
@@ -137,13 +145,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 100,
     color: "#fff",
+    alignSelf: "flex-start",
+    marginLeft: "10%"
   },
   viewCode: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     gap: 20,
-    marginVertical: 100,
+    marginTop: 100,
   },
   codeEmpty: {
     width: 20,
@@ -151,8 +161,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   numbers: {
-    width: "100%",
-    marginHorizontal: 80,
+    width: "90%",
+    marginTop: 100,
     gap: 60,
   },
   buttonNumber: {
@@ -167,4 +177,11 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
+  goBackBtn: {
+    marginLeft: "10%",
+    marginTop: 40,
+    width: "100%",
+    display: "flex",
+    alignItems: "flex-start"
+  }
 });

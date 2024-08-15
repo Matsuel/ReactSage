@@ -12,7 +12,7 @@ const Index = () => {
   return (
     <View style={styles.container}>
       <Text>Open up App.tsx to start working on your app!</Text>
-      <Button content="Test" onPress={() => router.push('lock')} />
+      <Button content="Test" onPress={() => router.push('lock')} variant='light' />
       <Input />
       <StatusBar style="auto" />
     </View>
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     paddingLeft: "5%",
-    backgroundColor: '#fff',
+    backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'center',
   },

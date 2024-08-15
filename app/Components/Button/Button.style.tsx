@@ -14,15 +14,15 @@ export const styles = StyleSheet.create({
         fontFamily: 'Outfit_700Bold',
     },
     default: {
-        backgroundColor: '#151515',
+        backgroundColor: '#202020',
         color: '#fff',
     },
     primary: {
         backgroundColor: '#d8dce2',
         color: '#fff',
     },
-    transparent: {
-        backgroundColor: 'transparent',
-        color: '#fff',
-    }
+    light: {
+        backgroundColor: '#fff',
+        color: '#000',
+    },
 });

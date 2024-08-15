@@ -7,8 +7,9 @@ import { Outfit_700Bold } from '@expo-google-fonts/outfit';
 import { styles } from './Button.style';
 
 interface ButtonProps extends PressableProps {
-    variant?: 'default' | 'primary' | 'transparent'
-    content: string
+    variant?: 'default' | 'primary' | 'light'
+    content?: string
+    icon?: React.ReactNode
     onPress?: () => void
 }
 
@@ -16,6 +17,7 @@ const Button = ({
     variant = 'default',
     content,
     onPress,
+    icon,
     ...props
 }: ButtonProps) => {
 
@@ -57,8 +59,12 @@ const Button = ({
                 onPress={handlePress}
                 style={[styles.btnContainer, styles[variant]]} {...props}
             >
-                <Text style={[styles.text, styles[variant]]}>{content}</Text>
-                <RightArrow {...props} color={styles[variant].color} />
+                {content &&
+                    <>
+                        <Text style={[styles.text, styles[variant]]}>{content}</Text>
+                        <RightArrow {...props} color={styles[variant].color} />
+                    </>}
+                {icon}
             </Pressable>
         </Animated.View>
     )

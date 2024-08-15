@@ -5,7 +5,7 @@ const inactive = () => {
     return (
         <View>
             <Text>
-                inactive
+                inactive cc
             </Text>
         </View>
     )
