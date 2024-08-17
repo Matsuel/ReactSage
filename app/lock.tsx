@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router'
+import { useNavigation, useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import * as Haptics from 'expo-haptics'
@@ -8,11 +8,12 @@ import BackSpace from './assets/BackSpace'
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated'
 import Button from './Components/Button'
 import LeftArrow from './assets/LeftArrow'
+import { router } from 'expo-router'
 
 const inactive = () => {
   const [code, setCode] = useState<number[]>([])
   const codeLength = Array(6).fill(0)
-  const router = useRouter()
+  const { reset } = useNavigation()
 
 
   const onNumberPress = (number: number) => {
@@ -37,7 +38,10 @@ const inactive = () => {
   const onBiometricPress = async () => {
     const { success } = await LocalAuthentication.authenticateAsync()
     if (success) {
-      router.replace('/')
+      reset({
+        index: 0,
+        routes: [{ name: 'homepage' } as never]
+      })
     } else {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
     }
@@ -48,10 +52,12 @@ const inactive = () => {
 
   useEffect(() => {
     if (code.length === 6) {
-      // voir pour intéragir avec la view d'index i pour chaque view de [i] faire une vibration et changer la couleur en vert ou en rouge
       if (code.join('') === '123456') {
         setCode([])
-        router.push('home')
+        reset({
+          index: 0,
+          routes: [{ name: 'homepage' } as never]
+        })
       } else {
         offset.value = withSequence(
           withTiming(-OFFSET, { duration: TIME / 2 }),
@@ -167,8 +173,8 @@ const styles = StyleSheet.create({
     gap: 60,
   },
   buttonNumber: {
-    width: 30,
-    height: 30,
+    width: 35,
+    height: 35,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",

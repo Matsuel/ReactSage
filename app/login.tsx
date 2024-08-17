@@ -3,6 +3,7 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-nativ
 import Button from './Components/Button'
 import { router } from 'expo-router'
 import LeftArrow from './assets/LeftArrow'
+import { StatusBar } from 'expo-status-bar'
 
 const Login = () => {
     const [phone, setPhone] = useState<string>("")
@@ -14,6 +15,7 @@ const Login = () => {
 
     return (
         <View style={styles.container}>
+            <StatusBar style="light" />
             <Text style={styles.title}>
                 Quel est votre numéro de téléphone ?
             </Text>
@@ -72,7 +74,6 @@ const styles = StyleSheet.create({
     inputText: {
         width: "100%",
         height: 40,
-        backgroundColor: "#000",
         color: "#fff",
         fontSize: 26,
         fontWeight: "bold",

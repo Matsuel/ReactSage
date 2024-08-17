@@ -6,6 +6,7 @@ import { router, useLocalSearchParams } from 'expo-router'
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated'
 import * as Haptics from 'expo-haptics'
 import ErrorComponent from './Components/Error'
+import { StatusBar } from 'expo-status-bar'
 
 const Otp = () => {
 
@@ -60,7 +61,7 @@ const Otp = () => {
     useEffect(() => {
         if (isCompleteCode) {
             if (code.join('') === otp) {
-                router.push('lock')
+                router.push('/lock')
             } else {
                 setErrorString("Le code saisi est incorrect")
                 offset.value = withSequence(
@@ -77,6 +78,7 @@ const Otp = () => {
 
     return (
         <View style={styles.container}>
+            <StatusBar style='light' />
             <Text style={styles.title}>
                 Entrez le code de vérification
             </Text>
