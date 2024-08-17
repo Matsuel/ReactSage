@@ -1,18 +1,27 @@
-import React, { useRef, useState } from 'react'
-import { NativeSyntheticEvent, StyleSheet, Text, TextInput, TextInputChangeEventData, TextInputKeyPressEventData, View } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import { NativeSyntheticEvent, StyleSheet, Text, TextInput, TextInputKeyPressEventData, View } from 'react-native'
 import Button from './Components/Button'
 import LeftArrow from './assets/LeftArrow'
 import { router, useLocalSearchParams } from 'expo-router'
+import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated'
+import * as Haptics from 'expo-haptics'
+import ErrorComponent from './Components/Error'
 
 const Otp = () => {
 
     const params = useLocalSearchParams()
-    const { phone } = params
+    const { phone, otp } = params
+    console.log(params);
+
 
     const [code, setCode] = useState<string[]>(Array(6).fill(""))
+    const [errorString, setErrorString] = useState<string>("")
     const inputRefs = Array(6).fill(0).map(() => useRef<TextInput>(null))
 
+    const isCompleteCode = code.every(char => char !== "")
+
     const handleCode = (index: number) => (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         const newCode = [...code]
 
         if (e.nativeEvent.key === 'Backspace') {
@@ -38,6 +47,33 @@ const Otp = () => {
         }
     }
 
+    const offset = useSharedValue(0)
+    const styleToApply = useAnimatedStyle(() => {
+        return {
+            transform: [{ translateX: offset.value }]
+        }
+    })
+
+    const OFFSET = 20;
+    const TIME = 80;
+
+    useEffect(() => {
+        if (isCompleteCode) {
+            if (code.join('') === otp) {
+                router.push('lock')
+            } else {
+                setErrorString("Le code saisi est incorrect")
+                offset.value = withSequence(
+                    withTiming(-OFFSET, { duration: TIME / 2 }),
+                    withRepeat(withTiming(OFFSET, { duration: TIME }), 4, true),
+                    withTiming(0, { duration: TIME / 2 })
+                )
+                setCode(Array(6).fill(""))
+                inputRefs[0].current?.focus()
+            }
+        }
+    }, [code])
+
 
     return (
         <View style={styles.container}>
@@ -45,7 +81,7 @@ const Otp = () => {
                 Entrez le code de vérification
             </Text>
 
-            <View style={styles.codeInputs}>
+            <Animated.View style={[styles.codeInputs, styleToApply]}>
                 {inputRefs.map((ref, i) => (
                     <TextInput
                         key={i}
@@ -58,11 +94,13 @@ const Otp = () => {
                         autoFocus={i === 0}
                     />
                 ))}
-            </View>
+            </Animated.View>
+
+            <ErrorComponent error={errorString} />
 
             <View style={styles.nextViewBtn}>
                 <Button icon={<LeftArrow color='#fff' />} onPress={() => router.replace('/')} />
-                <Button onPress={() => router.push({ pathname: "/lock" })} content='Suivant' disabled={!code.every(char => char !== "")} />
+                <Button onPress={() => router.push({ pathname: "/lock" })} content='Suivant' disabled={!isCompleteCode} />
             </View>
         </View>
     )
@@ -104,7 +142,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     nextViewBtn: {
-        marginTop: 50,
+        marginTop: 10,
         width: "100%",
         display: "flex",
         flexDirection: "row",

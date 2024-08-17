@@ -7,6 +7,11 @@ import LeftArrow from './assets/LeftArrow'
 const Login = () => {
     const [phone, setPhone] = useState<string>("")
 
+    const generateOtpCode = () => {
+        const code = Math.floor(100000 + Math.random() * 900000)
+        return code
+    }
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>
@@ -20,7 +25,7 @@ const Login = () => {
             </View>
             <View style={styles.nextViewBtn}>
                 <Button icon={<LeftArrow color='#fff' />} onPress={() => router.replace('/')} />
-                <Button onPress={() => router.push({ pathname: "/otp", params: { phone: phone } })} content='Suivant' disabled={phone.length < 10} />
+                <Button onPress={() => router.push({ pathname: "/otp", params: { phone: phone, otp: generateOtpCode() } })} content='Suivant' disabled={phone.length < 10} />
             </View>
         </View>
     )
