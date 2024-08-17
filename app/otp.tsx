@@ -99,7 +99,7 @@ const Otp = () => {
             <ErrorComponent error={errorString} />
 
             <View style={styles.nextViewBtn}>
-                <Button icon={<LeftArrow color='#fff' />} onPress={() => router.replace('/')} />
+                <Button icon={<LeftArrow color='#fff' />} onPress={() => router.back()} />
                 <Button onPress={() => router.push({ pathname: "/lock" })} content='Suivant' disabled={!isCompleteCode} />
             </View>
         </View>
