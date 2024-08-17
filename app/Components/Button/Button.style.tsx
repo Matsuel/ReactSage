@@ -25,4 +25,8 @@ export const styles = StyleSheet.create({
         backgroundColor: '#fff',
         color: '#000',
     },
+    disabled: {
+        backgroundColor: '#515151',
+        color: '#000',
+    },
 });

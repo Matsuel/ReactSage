@@ -14,6 +14,7 @@ const inactive = () => {
   const codeLength = Array(6).fill(0)
   const router = useRouter()
 
+
   const onNumberPress = (number: number) => {
     if (code.length < 6) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -122,7 +123,7 @@ const inactive = () => {
       </View>
 
       <View style={styles.goBackBtn} >
-        <Button icon={<LeftArrow color='#fff' />} onPress={() => router.push('login')} />
+        <Button icon={<LeftArrow color='#fff' />} onPress={() => router.replace('login')} />
       </View>
 
     </SafeAreaView>
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
     height: '100%',
     paddingLeft: "5%",
     paddingRight: "5%",
-    backgroundColor: '#000',
+    backgroundColor: '#0f0f0f',
     alignItems: 'center',
   },
   title: {

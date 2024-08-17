@@ -7,7 +7,7 @@ import { Outfit_700Bold } from '@expo-google-fonts/outfit';
 import { styles } from './Button.style';
 
 interface ButtonProps extends PressableProps {
-    variant?: 'default' | 'primary' | 'light'
+    variant?: 'default' | 'primary' | 'light' | 'disabled'
     content?: string
     icon?: React.ReactNode
     onPress?: () => void
@@ -22,7 +22,7 @@ const Button = ({
 }: ButtonProps) => {
 
     if (props.disabled && props.disabled === true) {
-        variant = 'primary'
+        variant = 'disabled'
     }
 
 
