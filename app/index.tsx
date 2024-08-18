@@ -1,22 +1,33 @@
-import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import Button from './Components/Button'
-import Input from './Components/Input'
+import React, { useEffect } from 'react'
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { useRouter } from 'expo-router'
+import { getSecureData } from './utils/getData'
 
 const Index = () => {
 
   const router = useRouter()
 
+  useEffect(() => {
+    const fetchDatas = async () => {
+      const login = await getSecureData('login')
+      console.log(login);
+      setTimeout(() => {
+        if (login === "true") {
+          router.push('homepage')
+        } else {
+          router.push('welcome')
+        }
+      }, 20000000)
+    }
+    fetchDatas()
+  }, [])
+
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
-      <Text style={styles.title}>Bienvenue sur ReactSage</Text>
-      <View style={styles.btns}>
-        <Button content="Connexion" onPress={() => router.push('logn')} variant='default' />
-        <Button content="Connexion" onPress={() => router.push('login')} variant='light' />
-      </View>
+      <Text style={styles.title}>LOGOGOGOGOGO</Text>
+      <ActivityIndicator size={"large"} color="#fff" />
     </View>
   )
 }
@@ -31,22 +42,12 @@ const styles = StyleSheet.create({
     paddingRight: "5%",
     backgroundColor: '#0f0f0f',
     alignItems: 'center',
-    justifyContent: "space-between"
-  },
-  btns: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "row",
     justifyContent: "center",
-    gap: 10,
-    marginBottom: 50
+    gap: 100
   },
   title: {
-    fontSize: 26,
+    fontSize: 64,
     fontWeight: "bold",
-    marginTop: 100,
     color: "#fff",
-    alignSelf: "flex-start",
-    marginLeft: "10%"
   },
 });

@@ -7,12 +7,22 @@ import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, w
 import * as Haptics from 'expo-haptics'
 import ErrorComponent from './Components/Error'
 import { StatusBar } from 'expo-status-bar'
+import * as SecureStore from 'expo-secure-store'
 
 const Otp = () => {
 
     const params = useLocalSearchParams()
     const { phone, otp } = params
     console.log(params);
+
+    const storeSecureData = async (key: any, value: any) => {
+        try {
+            await SecureStore.setItemAsync(key, value);
+            console.log('Data stored securely');
+        } catch (error) {
+            console.error('Error storing secure data', error);
+        }
+    };
 
 
     const [code, setCode] = useState<string[]>(Array(6).fill(""))
@@ -61,6 +71,8 @@ const Otp = () => {
     useEffect(() => {
         if (isCompleteCode) {
             if (code.join('') === otp) {
+                storeSecureData('phone', phone)
+                storeSecureData('login', "true")
                 router.push('/lock')
             } else {
                 setErrorString("Le code saisi est incorrect")
