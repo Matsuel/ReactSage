@@ -2,8 +2,8 @@ import React, { useRef } from 'react'
 import { Animated, Text, Pressable, PressableProps } from 'react-native'
 import * as Haptics from 'expo-haptics';
 import RightArrow from '../../assets/RightArrow';
-import { useFonts } from 'expo-font';
-import { Outfit_700Bold } from '@expo-google-fonts/outfit';
+// import { useFonts } from 'expo-font';
+// import { Outfit_700Bold } from '@expo-google-fonts/outfit';
 import { styles } from './Button.style';
 
 interface ButtonProps extends PressableProps {
@@ -26,9 +26,9 @@ const Button = ({
     }
 
 
-    const [fontsLoaded] = useFonts({
-        Outfit_700Bold,
-    });
+    // const [fontsLoaded] = useFonts({
+    //     Outfit_700Bold,
+    // });
 
     const scaleAnim = useRef(new Animated.Value(1)).current;
 

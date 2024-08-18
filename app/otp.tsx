@@ -7,22 +7,14 @@ import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, w
 import * as Haptics from 'expo-haptics'
 import ErrorComponent from './Components/Error'
 import { StatusBar } from 'expo-status-bar'
-import * as SecureStore from 'expo-secure-store'
+import { storeSecureData } from './utils/storeData'
+import InputOtp from './Components/InputOtp'
 
 const Otp = () => {
 
     const params = useLocalSearchParams()
     const { phone, otp } = params
     console.log(params);
-
-    const storeSecureData = async (key: any, value: any) => {
-        try {
-            await SecureStore.setItemAsync(key, value);
-            console.log('Data stored securely');
-        } catch (error) {
-            console.error('Error storing secure data', error);
-        }
-    };
 
 
     const [code, setCode] = useState<string[]>(Array(6).fill(""))
@@ -97,9 +89,8 @@ const Otp = () => {
 
             <Animated.View style={[styles.codeInputs, styleToApply]}>
                 {inputRefs.map((ref, i) => (
-                    <TextInput
+                    <InputOtp
                         key={i}
-                        style={styles.input}
                         onKeyPress={handleCode(i)}
                         keyboardType='phone-pad'
                         maxLength={1}
@@ -144,16 +135,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         marginTop: 30,
-    },
-    input: {
-        width: 50,
-        height: 50,
-        backgroundColor: "#202020",
-        color: "#fff",
-        borderRadius: 12,
-        fontSize: 26,
-        fontWeight: "bold",
-        textAlign: "center",
     },
     nextViewBtn: {
         marginTop: 10,

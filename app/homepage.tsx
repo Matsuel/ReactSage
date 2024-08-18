@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native'
 const Home = () => {
     return (
         <View style={styles.container}>
-            <Text>cc</Text>
+            <Text style={{ color: "#fff" }}>cc</Text>
         </View>
     )
 }
@@ -19,5 +19,6 @@ const styles = StyleSheet.create({
         paddingRight: "5%",
         backgroundColor: '#0f0f0f',
         alignItems: 'center',
+        justifyContent: "center"
     },
 })

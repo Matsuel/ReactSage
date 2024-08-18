@@ -11,14 +11,13 @@ const Index = () => {
   useEffect(() => {
     const fetchDatas = async () => {
       const login = await getSecureData('login')
-      console.log(login);
       setTimeout(() => {
         if (login === "true") {
           router.push('homepage')
         } else {
           router.push('welcome')
         }
-      }, 20000000)
+      }, 2000)
     }
     fetchDatas()
   }, [])
