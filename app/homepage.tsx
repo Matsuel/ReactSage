@@ -1,8 +1,27 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import {Websocket} from 'react-native-websocket'
 
 const Home = () => {
+
+    
+    useEffect(() => {
+        console.log(process.env.EXPO_PUBLIC_SERVER_IP);
+        
+        const ws = new WebSocket('ws://' + process.env.EXPO_PUBLIC_SERVER_IP + ':8080')
+        ws.onopen = () => {
+            console.log('connected')
+            ws.send('Hello')
+        }
+
+        ws.onmessage = (e) => {
+            console.log(e.data)
+        }
+
+        ws.onclose = () => {
+            console.log('disconnected')
+        }
+    }, [])
+
     return (
         <View style={styles.container}>
             <Text style={{ color: "#fff" }}>gros negro</Text>
