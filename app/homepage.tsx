@@ -1,10 +1,11 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import {Websocket} from 'react-native-websocket'
 
 const Home = () => {
     return (
         <View style={styles.container}>
-            <Text style={{ color: "#fff" }}>cc</Text>
+            <Text style={{ color: "#fff" }}>gros negro</Text>
         </View>
     )
 }

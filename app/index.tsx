@@ -3,6 +3,7 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { useRouter } from 'expo-router'
 import { getSecureData } from './utils/getData'
+import { deleteSecureData } from './utils/deleteData'
 
 const Index = () => {
 
