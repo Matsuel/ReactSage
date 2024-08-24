@@ -1,4 +1,5 @@
 import { Stack } from 'expo-router'
+import {io} from 'socket.io-client';
 
 export default function Layout() {
     return (
@@ -16,3 +17,5 @@ export default function Layout() {
         // </UserInactivityProvider>
     )
 }
+
+export const socket = io(`http://${process.env.EXPO_PUBLIC_SERVER_IP}:8080`);

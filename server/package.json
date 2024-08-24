@@ -14,8 +14,12 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
     "mongodb": "^6.8.0",
     "mongoose": "^8.5.3",
+    "socket.io": "^4.7.5",
     "ws": "^8.18.0"
   }
 }

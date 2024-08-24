@@ -1,25 +1,14 @@
 import React, { useEffect } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import { socket } from './_layout'
 
 const Home = () => {
 
-    
     useEffect(() => {
-        console.log(process.env.EXPO_PUBLIC_SERVER_IP);
-        
-        const ws = new WebSocket('ws://' + process.env.EXPO_PUBLIC_SERVER_IP + ':8080')
-        ws.onopen = () => {
-            console.log('connected')
-            ws.send('Hello')
-        }
-
-        ws.onmessage = (e) => {
-            console.log(e.data)
-        }
-
-        ws.onclose = () => {
-            console.log('disconnected')
-        }
+        socket.emit('test', 'test')
+        socket.on('test', (data) => {
+            console.log(data)
+        })
     }, [])
 
     return (

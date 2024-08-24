@@ -1,4 +1,7 @@
-import { Server } from 'ws'
+import { createServer } from 'http'
+import express from 'express'
+import { Server } from 'socket.io';
+import cors from 'cors';
 
 export const createWebSocketServer = ({
     address,
@@ -7,7 +10,23 @@ export const createWebSocketServer = ({
     address: string,
     port: number
 }): Server => {
-    const wss = new Server({ host: address, port: port })
-    console.log(`\x1b[34mServer start on address ${address} and port ${port}\x1b[0m`);
-    return wss
+    try {
+        const app = express();
+        app.use(cors())
+        const server = createServer(app);
+        const io = new Server(server, {
+            cors: {
+                origin: `http://${address}:${port}`,
+                methods: ["GET", "POST"],
+                credentials: true
+            },
+            maxHttpBufferSize: 1e9
+        });
+        server.listen(port, () => {
+            console.log(`Server is running on port ${port} 👂`);
+        });
+        return io
+    } catch (error) {
+        console.log(error);
+    }
 }
