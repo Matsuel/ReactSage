@@ -5,6 +5,8 @@ import { createWebSocketServer } from './functions/initWS'
 import { connectToDb } from './functions/connecToDb'
 import mongoose from 'mongoose'
 import { UserModel } from './scheme/User'
+import { generateRandomPseudo } from './functions/randomPseudo'
+import bcrypt from 'bcrypt'
 
 const IPTOUSE = getLocalIpV4()
 
@@ -22,17 +24,28 @@ io.on('connection', (socket) => {
         console.log('received: %s', data);
     });
 
-    socket.on('login', function message(data) {
+    socket.on('login', async function message(data) {
         console.log('received: %s', data);
         socket.emit('login', 'kk')
     });
 
-    socket.on('register', function message(data) {
+    socket.on('register', async function message(data) {
         console.log('received: %s', data);
-        socket.emit('register', 'kk')
-    });
 
-    socket.send('something');
+        try {
+            const user = new UserModel({
+                phone: data.phone,
+                username: generateRandomPseudo(),
+                pin: bcrypt.hashSync(data.pin, 10),
+            })
+
+            await user.save()
+            socket.emit('register', { success: true, id: user._id, username: user.username })
+
+        } catch (error) {
+            socket.emit('register', { success: false })
+        }
+    });
 });
 
 connectToDb()

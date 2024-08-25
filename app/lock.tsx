@@ -1,4 +1,4 @@
-import { useNavigation, useRouter } from 'expo-router'
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import * as Haptics from 'expo-haptics'
@@ -9,11 +9,15 @@ import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, w
 import Button from './Components/Button'
 import LeftArrow from './assets/LeftArrow'
 import { router } from 'expo-router'
+import { emitAndListenEvent } from './utils/events'
+import { storeSecureData } from './utils/storeData'
 
 const inactive = () => {
   const [code, setCode] = useState<number[]>([])
   const codeLength = Array(6).fill(0)
   const { reset } = useNavigation()
+  const params = useLocalSearchParams()
+  const { phone, type } = params
 
 
   const onNumberPress = (number: number) => {
@@ -52,7 +56,23 @@ const inactive = () => {
 
   useEffect(() => {
     if (code.length === 6) {
-      if (code.join('') === '123456') {
+      if (type === 'register') {
+        emitAndListenEvent('register', { phone, pin: code.join('') }, (data) => {
+          console.log(data);
+          if (data.success === true) {
+            storeSecureData('phone', phone)
+            storeSecureData('pin', code.join(''))
+            storeSecureData('username', data.username)
+            storeSecureData('id', data.id)
+            storeSecureData('login', 'true')
+            reset({
+              index: 0,
+              routes: [{ name: 'homepage' } as never]
+            })
+          }
+        })
+      }
+      else if (code.join('') === '123456') {
         setCode([])
         reset({
           index: 0,
@@ -73,7 +93,7 @@ const inactive = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Entrez votre code PIN</Text>
+      <Text style={styles.title}>{type === "register" ? "Créez" : "Entrez"} votre code PIN</Text>
 
       <Animated.View style={[styles.viewCode, styleToApply]}>
         {codeLength.map((_, index) => (

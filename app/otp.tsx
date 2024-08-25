@@ -65,15 +65,12 @@ const Otp = () => {
         if (isCompleteCode) {
             if (code.join('') === otp) {
                 if (type === "login") {
-                    emitAndListenEvent('login', { phone: phone }, (data)=>{
+                    emitAndListenEvent('login', { phone: phone }, (data) => {
                         console.log(data);
                     })
                 } else {
-                    emitAndListenEvent('register', { phone: phone }, (data)=>{
-                        console.log(data);
-                    })
+                    router.push({ pathname: '/lock', params: { phone, type } })
                 }
-                // router.push('/lock')
             } else {
                 setErrorString("Le code saisi est incorrect")
                 offset.value = withSequence(

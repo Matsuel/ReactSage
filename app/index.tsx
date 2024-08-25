@@ -11,6 +11,7 @@ const Index = () => {
 
   useEffect(() => {
     const fetchDatas = async () => {
+      // await deleteSecureData('login')
       const login = await getSecureData('login')
       setTimeout(() => {
         if (login === "true") {

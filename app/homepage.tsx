@@ -1,15 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { socket } from './_layout'
+import { getSecureData } from './utils/getData'
 
 const Home = () => {
-
-    useEffect(() => {
-        socket.emit('test', 'test')
-        socket.on('test', (data) => {
-            console.log(data)
-        })
-    }, [])
 
     return (
         <View style={styles.container}>

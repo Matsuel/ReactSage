@@ -9,6 +9,6 @@ export const User = new mongoose.Schema<UserInterface>({
     options: {
         showOnline: { type: Boolean, default: true },
     }
-})
+}, { collection: 'users' })
 
 export const UserModel = mongoose.model<UserInterface>('User', User)
