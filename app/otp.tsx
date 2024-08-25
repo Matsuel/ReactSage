@@ -9,11 +9,12 @@ import ErrorComponent from './Components/Error'
 import { StatusBar } from 'expo-status-bar'
 import { storeSecureData } from './utils/storeData'
 import InputOtp from './Components/InputOtp'
+import { emitAndListenEvent } from './utils/events'
 
 const Otp = () => {
 
     const params = useLocalSearchParams()
-    const { phone, otp } = params
+    const { phone, otp, type } = params
     console.log(params);
 
 
@@ -63,9 +64,16 @@ const Otp = () => {
     useEffect(() => {
         if (isCompleteCode) {
             if (code.join('') === otp) {
-                storeSecureData('phone', phone)
-                storeSecureData('login', "true")
-                router.push('/lock')
+                if (type === "login") {
+                    emitAndListenEvent('login', { phone: phone }, (data)=>{
+                        console.log(data);
+                    })
+                } else {
+                    emitAndListenEvent('register', { phone: phone }, (data)=>{
+                        console.log(data);
+                    })
+                }
+                // router.push('/lock')
             } else {
                 setErrorString("Le code saisi est incorrect")
                 offset.value = withSequence(

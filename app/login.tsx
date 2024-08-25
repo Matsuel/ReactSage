@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import Button from './Components/Button'
-import { router } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
 import LeftArrow from './assets/LeftArrow'
 import { StatusBar } from 'expo-status-bar'
 
 const Login = () => {
     const [phone, setPhone] = useState<string>("")
+    const params = useLocalSearchParams()
+    const { type } = params;
 
     const generateOtpCode = () => {
         const code = Math.floor(100000 + Math.random() * 900000)
@@ -27,7 +29,7 @@ const Login = () => {
             </View>
             <View style={styles.nextViewBtn}>
                 <Button icon={<LeftArrow color='#fff' />} onPress={() => router.replace('/')} />
-                <Button onPress={() => router.push({ pathname: "/otp", params: { phone: phone, otp: generateOtpCode() } })} content='Suivant' disabled={phone.length < 10} />
+                <Button onPress={() => router.push({ pathname: "/otp", params: { phone: phone, otp: generateOtpCode(), type: type } })} content='Suivant' disabled={phone.length < 10} />
             </View>
         </View>
     )

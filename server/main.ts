@@ -22,9 +22,15 @@ io.on('connection', (socket) => {
         console.log('received: %s', data);
     });
 
-    socket.on('kk', function message(data) {
-        console.log('kk: %s', data);
-    })
+    socket.on('login', function message(data) {
+        console.log('received: %s', data);
+        socket.emit('login', 'kk')
+    });
+
+    socket.on('register', function message(data) {
+        console.log('received: %s', data);
+        socket.emit('register', 'kk')
+    });
 
     socket.send('something');
 });
