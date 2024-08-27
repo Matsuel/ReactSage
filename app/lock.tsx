@@ -75,7 +75,9 @@ const inactive = () => {
         })
       }
       else if (type === 'login') {
-        emitAndListenEvent('checkPin', { phone, pin: code.join('') }, (data) => {          
+        emitAndListenEvent('checkPin', { phone, pin: code.join('') }, (data) => {    
+          console.log(data);
+                
           if (data.success === true) {
             storeSecureData('phone', phone)
             storeSecureData('pin', code.join(''))
@@ -102,23 +104,15 @@ const inactive = () => {
           index: 0,
           routes: [{ name: 'homepage' } as never]
         })
+      } else {
+        offset.value = withSequence(
+          withTiming(-OFFSET, { duration: TIME / 2 }),
+          withRepeat(withTiming(OFFSET, { duration: TIME }), 4, true),
+          withTiming(0, { duration: TIME / 2 })
+        )
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+        setCode([])
       }
-      // else if (code.join('') === '123456') {
-      //   setCode([])
-      //   reset({
-      //     index: 0,
-      //     routes: [{ name: 'homepage' } as never]
-      //   })
-      // } else {
-      //   offset.value = withSequence(
-      //     withTiming(-OFFSET, { duration: TIME / 2 }),
-      //     withRepeat(withTiming(OFFSET, { duration: TIME }), 4, true),
-      //     withTiming(0, { duration: TIME / 2 })
-      //   )
-      //   Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-      //   setCode([])
-      // }
-
     }
   }, [code])
 
