@@ -63,10 +63,25 @@ const Otp = () => {
 
     useEffect(() => {
         if (isCompleteCode) {
-            if (code.join('') === otp) {
+            if (code.join('') === otp) {                
                 if (type === "login") {
                     emitAndListenEvent('login', { phone: phone }, (data) => {
-                        console.log(data);
+                        if (data.success) {
+                            storeSecureData('phone', phone)
+                            storeSecureData('pin', data.pin)
+                            storeSecureData('username', data.username)
+                            storeSecureData('id', data.id)
+                            storeSecureData('login', 'true')
+                            router.push({ pathname: '/lock', params: { phone, type } })
+                        } else {
+                            setErrorString("Utilisateur non trouvé")
+                            offset.value = withSequence(
+                                withTiming(-OFFSET, { duration: TIME / 2 }),
+                                withRepeat(withTiming(OFFSET, { duration: TIME }), 4, true),
+                                withTiming(0, { duration: TIME / 2 })
+                            )
+                            setCode(Array(6).fill(""))
+                        }
                     })
                 } else {
                     router.push({ pathname: '/lock', params: { phone, type } })

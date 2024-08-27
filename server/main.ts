@@ -3,7 +3,6 @@ import { getFileInApp } from './functions/getFileInApp'
 import { replaceFileContent } from './functions/replaceFilleContent'
 import { createWebSocketServer } from './functions/initWS'
 import { connectToDb } from './functions/connecToDb'
-import mongoose from 'mongoose'
 import { UserModel } from './scheme/User'
 import { generateRandomPseudo } from './functions/randomPseudo'
 import bcrypt from 'bcrypt'
@@ -24,9 +23,39 @@ io.on('connection', (socket) => {
         console.log('received: %s', data);
     });
 
+    socket.on('checkPin', async function message(data) {
+        console.log(data);
+
+        const { phone, pin } = data
+        try {
+            const user = await UserModel.findOne({ phone })
+            if (user) {
+                const match = bcrypt.compareSync(pin, user.pin);
+                if (match) {
+                    socket.emit('checkPin', { success: true, id: user._id, username: user.username });
+                } else {
+                    socket.emit('checkPin', { success: false, message: 'Pin not match' });
+                }
+            } else {
+                socket.emit('checkPin', { success: false, message: 'User not found' });
+            }
+        } catch (error) {
+            socket.emit('checkPin', { success: false, message: 'Login failed' });
+        }
+    });
+
     socket.on('login', async function message(data) {
-        console.log('received: %s', data);
-        socket.emit('login', 'kk')
+        const { phone } = data
+        try {
+            const user = await UserModel.findOne({ phone })
+            if (user) {
+                socket.emit('login', { success: true, id: user._id, username: user.username, phone: user.phone, pin: user.pin })
+            } else {
+                socket.emit('login', { success: false, message: 'User not found' });
+            }
+        } catch (error) {
+            socket.emit('login', { success: false, message: 'Login failed' });
+        }
     });
 
     socket.on('register', async function message(data) {

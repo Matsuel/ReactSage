@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import { socket } from './_layout'
-import { getSecureData } from './utils/getData'
 
 const Home = () => {
 

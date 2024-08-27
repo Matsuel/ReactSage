@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -30,28 +21,60 @@ io.on('connection', (socket) => {
         socket.emit('test', 'kk');
         console.log('received: %s', data);
     });
-    socket.on('login', function message(data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            console.log('received: %s', data);
-            socket.emit('login', 'kk');
-        });
+    socket.on('checkPin', async function message(data) {
+        console.log(data);
+        const { phone, pin } = data;
+        try {
+            const user = await User_1.UserModel.findOne({ phone });
+            if (user) {
+                const match = bcrypt_1.default.compareSync(pin, user.pin);
+                console.log(match);
+                if (match) {
+                    socket.emit('checkPin', { success: true, id: user._id, username: user.username });
+                }
+                else {
+                    socket.emit('checkPin', { success: false, message: 'Pin not match' });
+                }
+            }
+            else {
+                socket.emit('checkPin', { success: false, message: 'User not found' });
+            }
+        }
+        catch (error) {
+            console.log(error);
+            socket.emit('checkPin', { success: false, message: 'Login failed' });
+        }
     });
-    socket.on('register', function message(data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            console.log('received: %s', data);
-            try {
-                const user = new User_1.UserModel({
-                    phone: data.phone,
-                    username: (0, randomPseudo_1.generateRandomPseudo)(),
-                    pin: bcrypt_1.default.hashSync(data.pin, 10),
-                });
-                yield user.save();
-                socket.emit('register', { success: true, id: user._id, username: user.username });
+    socket.on('login', async function message(data) {
+        const { phone } = data;
+        try {
+            const user = await User_1.UserModel.findOne({ phone });
+            if (user) {
+                socket.emit('login', { success: true, id: user._id, username: user.username, phone: user.phone, pin: user.pin });
             }
-            catch (error) {
-                socket.emit('register', { success: false });
+            else {
+                socket.emit('login', { success: false, message: 'User not found' });
             }
-        });
+        }
+        catch (error) {
+            console.log(error);
+            socket.emit('login', { success: false, message: 'Login failed' });
+        }
+    });
+    socket.on('register', async function message(data) {
+        console.log('received: %s', data);
+        try {
+            const user = new User_1.UserModel({
+                phone: data.phone,
+                username: (0, randomPseudo_1.generateRandomPseudo)(),
+                pin: bcrypt_1.default.hashSync(data.pin, 10),
+            });
+            await user.save();
+            socket.emit('register', { success: true, id: user._id, username: user.username });
+        }
+        catch (error) {
+            socket.emit('register', { success: false });
+        }
     });
 });
 (0, connecToDb_1.connectToDb)();

@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar'
 import { useRouter } from 'expo-router'
 import { getSecureData } from './utils/getData'
 import { deleteSecureData } from './utils/deleteData'
+import Button from './Components/Button'
 
 const Index = () => {
 
@@ -11,11 +12,10 @@ const Index = () => {
 
   useEffect(() => {
     const fetchDatas = async () => {
-      // await deleteSecureData('login')
       const login = await getSecureData('login')
       setTimeout(() => {
         if (login === "true") {
-          router.push('homepage')
+          router.push('lock')
         } else {
           router.push('welcome')
         }
@@ -28,6 +28,7 @@ const Index = () => {
     <View style={styles.container}>
       <StatusBar style="light" />
       <Text style={styles.title}>LOGOGOGOGOGO</Text>
+      <Button content="Go to welcome" onPress={() => router.push('welcome')} />
       <ActivityIndicator size={"large"} color="#fff" />
     </View>
   )

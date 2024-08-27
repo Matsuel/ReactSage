@@ -11,6 +11,7 @@ import LeftArrow from './assets/LeftArrow'
 import { router } from 'expo-router'
 import { emitAndListenEvent } from './utils/events'
 import { storeSecureData } from './utils/storeData'
+import { getSecureData } from './utils/getData'
 
 const inactive = () => {
   const [code, setCode] = useState<number[]>([])
@@ -18,6 +19,7 @@ const inactive = () => {
   const { reset } = useNavigation()
   const params = useLocalSearchParams()
   const { phone, type } = params
+  const [userCode, setUserCode] = useState<string>("")
 
 
   const onNumberPress = (number: number) => {
@@ -72,24 +74,65 @@ const inactive = () => {
           }
         })
       }
-      else if (code.join('') === '123456') {
+      else if (type === 'login') {
+        emitAndListenEvent('checkPin', { phone, pin: code.join('') }, (data) => {          
+          if (data.success === true) {
+            storeSecureData('phone', phone)
+            storeSecureData('pin', code.join(''))
+            storeSecureData('username', data.username)
+            storeSecureData('id', data.id)
+            storeSecureData('login', 'true')
+            reset({
+              index: 0,
+              routes: [{ name: 'homepage' } as never]
+            })
+          } else {
+            offset.value = withSequence(
+              withTiming(-OFFSET, { duration: TIME / 2 }),
+              withRepeat(withTiming(OFFSET, { duration: TIME }), 4, true),
+              withTiming(0, { duration: TIME / 2 })
+            )
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+            setCode([])
+          }
+        })
+      } else if (code.join('') === userCode) {
         setCode([])
         reset({
           index: 0,
           routes: [{ name: 'homepage' } as never]
         })
-      } else {
-        offset.value = withSequence(
-          withTiming(-OFFSET, { duration: TIME / 2 }),
-          withRepeat(withTiming(OFFSET, { duration: TIME }), 4, true),
-          withTiming(0, { duration: TIME / 2 })
-        )
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-        setCode([])
       }
+      // else if (code.join('') === '123456') {
+      //   setCode([])
+      //   reset({
+      //     index: 0,
+      //     routes: [{ name: 'homepage' } as never]
+      //   })
+      // } else {
+      //   offset.value = withSequence(
+      //     withTiming(-OFFSET, { duration: TIME / 2 }),
+      //     withRepeat(withTiming(OFFSET, { duration: TIME }), 4, true),
+      //     withTiming(0, { duration: TIME / 2 })
+      //   )
+      //   Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+      //   setCode([])
+      // }
 
     }
   }, [code])
+
+  useEffect(() => {
+    if (type !== 'login' && type !== 'register') {
+      const getLocalCode = async () => {
+        const pin = await getSecureData('pin')
+        console.log(pin);
+        setUserCode(pin as string)
+      }
+      getLocalCode()
+    }
+  }, [])
+
 
   return (
     <SafeAreaView style={styles.container}>
