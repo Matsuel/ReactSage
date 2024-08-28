@@ -4,6 +4,7 @@ import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'r
 import { socket } from './_layout'
 import { debounce } from 'lodash'
 import { UserInterface } from '../server/type'
+import UserComponent from './Components/User'
 
 const createconversation = () => {
 
@@ -54,7 +55,7 @@ const createconversation = () => {
       <FlatList
         style={styles.flatList}
         data={users}
-        renderItem={({ item }) => <Text>{item._id}</Text>}
+        renderItem={({ item }) => <UserComponent _id={item._id as string} phone={item.phone} username={item.username} picture={item.picture} />}
       />
     </View>
   )

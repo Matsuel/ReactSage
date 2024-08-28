@@ -14,6 +14,13 @@ export interface UserInterface extends mongoose.Document {
     color: string;
 }
 
+export interface UserInterfaceComponent {
+    picture: string;
+    phone: string;
+    username: string;
+    _id: string;
+}
+
 export interface ConversationInterface extends mongoose.Document {
     createdAt: Date;
     isGroup: boolean;
