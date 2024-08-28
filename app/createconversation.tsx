@@ -1,12 +1,27 @@
-import { useRouter } from 'expo-router'
-import React, { useCallback } from 'react'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { useLocalSearchParams, useRouter } from 'expo-router'
+import React, { useCallback, useState } from 'react'
+import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { socket } from './_layout'
 import { debounce } from 'lodash'
+import { UserInterface } from '../server/type'
 
 const createconversation = () => {
 
+  const params = useLocalSearchParams()
+  const { id } = params
+  const [users, setUsers] = useState<UserInterface[]>([])
+  const [searchValue, setSearchValue] = useState<string>('')
+
+
   const router = useRouter()
+
+  socket.on('searchUsers', (data) => {
+    console.log(data);
+    if (data.success) {
+      setUsers(data.users)
+    }
+  })
+
 
   const goBack = () => {
     if (router.canGoBack()) {
@@ -14,24 +29,33 @@ const createconversation = () => {
     }
   }
 
-  const search = useCallback(debounce((text:string) => {
+  const search = useCallback(debounce((text: string) => {
     if (text.trim().length > 0) {
-      socket.emit('search', text)
+      socket.emit('searchUsers', { id, search: text })
     }
-  }, 500), [])
+  }, 1000), [])
 
   return (
     <View style={styles.container}>
       <View style={styles.top}>
         <TextInput style={styles.input}
-         placeholder="Rechercher ici par nom ou téléphone" 
-         placeholderTextColor={"#fff"} 
-         onChangeText={search}
-         />
+          placeholder="Rechercher ici par nom ou téléphone"
+          placeholderTextColor={"#fff"}
+          onChangeText={search}
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.nativeEvent.text)}
+          autoFocus
+        />
         <TouchableOpacity style={styles.searchBtn} onPress={goBack}>
           <Text style={styles.searchText}>Annuler</Text>
         </TouchableOpacity>
       </View>
+
+      <FlatList
+        style={styles.flatList}
+        data={users}
+        renderItem={({ item }) => <Text>{item._id}</Text>}
+      />
     </View>
   )
 }
@@ -55,5 +79,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginTop: 35,
+  },
+  flatList: {
+    marginTop: 15,
+    position: 'relative',
   },
 })

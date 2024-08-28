@@ -6,10 +6,14 @@ import Button from './Components/Button'
 import NewConversation from './assets/NewConversation'
 import Search from './assets/Search'
 import { router } from 'expo-router'
+import { useStorageData } from './hooks/useStorageData'
 
 const Home = () => {
 
     const [refreshing, setRefreshing] = useState(false)
+    const { data: userId, loading } = useStorageData('id')
+    console.log(userId, loading);
+
 
     const onRefresh = useCallback(() => {
         setRefreshing(true)
@@ -17,6 +21,12 @@ const Home = () => {
             setRefreshing(false)
         }, 2000)
     }, [])
+
+    if (loading) {
+        return <View style={styles.container}>
+            <Text>Loading...</Text>
+        </View>
+    }
 
     return (
         <View style={styles.container}>
@@ -35,8 +45,8 @@ const Home = () => {
                 }
             />
             <View style={styles.btns}>
-                <Button variant='light' content="Filtrer" icon={<Search color='#000' width={25} />} />
-                <Button onPress={() => router.push({ pathname: "/createconversation" })} variant='light' content="Créer" icon={<NewConversation color='#000' width={25} />} />
+                <Button variant='light' content="Recherche" icon={<Search color='#000' width={25} />} />
+                <Button onPress={() => router.push({ pathname: "/createconversation", params: { id: userId } })} variant='light' content="Créer" icon={<NewConversation color='#000' width={25} />} />
             </View>
         </View>
     )
@@ -64,7 +74,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        gap: 40,
-        marginBottom: 25,
+        gap: 25,
+        marginBottom: 40,
     }
 })

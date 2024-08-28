@@ -5,6 +5,7 @@ interface UserOptions {
 }
 
 export interface UserInterface extends mongoose.Document {
+    picture: string;
     phone: string;
     username: string;
     pin: string;

@@ -16,11 +16,7 @@ console.log("\x1b[34mServer will run on IP:", IPTOUSE, "\x1b[0m");
 const envFilePath = (0, getFileInApp_1.getFileInApp)(".env.local");
 (0, replaceFilleContent_1.replaceFileContent)(envFilePath, "EXPO_PUBLIC_SERVER_IP=", IPTOUSE);
 const io = (0, initWS_1.createWebSocketServer)({ address: IPTOUSE, port: 8080 });
-io.on('connection', (socket) => {
-    socket.on('test', function message(data) {
-        socket.emit('test', 'kk');
-        console.log('received: %s', data);
-    });
+io.on('connection', async (socket) => {
     socket.on('checkPin', async function message(data) {
         console.log(data);
         const { phone, pin } = data;
@@ -71,6 +67,18 @@ io.on('connection', (socket) => {
         }
         catch (error) {
             socket.emit('register', { success: false });
+        }
+    });
+    socket.on('searchUsers', async function message(data) {
+        console.log('received: %s', data);
+        const { id, search } = data;
+        try {
+            let users = await User_1.UserModel.find({ username: { $regex: search, $options: 'i' } }).select('username phone _id picture');
+            users = users.filter(user => user._id.toString() !== id);
+            socket.emit('searchUsers', { success: true, users });
+        }
+        catch (error) {
+            socket.emit('searchUsers', { success: false });
         }
     });
 });
