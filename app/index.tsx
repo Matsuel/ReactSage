@@ -5,32 +5,34 @@ import { useRouter } from 'expo-router'
 import { getSecureData } from './utils/getData'
 import { deleteSecureData } from './utils/deleteData'
 import Button from './Components/Button'
+import Home from './homepage'
 
 const Index = () => {
 
-  const router = useRouter()
+  // const router = useRouter()
 
-  useEffect(() => {
-    const fetchDatas = async () => {
-      const login = await getSecureData('login')
-      setTimeout(() => {
-        if (login === "true") {
-          router.push('lock')
-        } else {
-          router.push('welcome')
-        }
-      }, 2000)
-    }
-    fetchDatas()
-  }, [])
+  // useEffect(() => {
+  //   const fetchDatas = async () => {
+  //     const login = await getSecureData('login')
+  //     setTimeout(() => {
+  //       if (login === "true") {
+  //         router.push('homepage')
+  //       } else {
+  //         router.push('welcome')
+  //       }
+  //     }, 2000)
+  //   }
+  //   fetchDatas()
+  // }, [])
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="light" />
-      <Text style={styles.title}>LOGOGOGOGOGO</Text>
-      <Button content="Go to welcome" onPress={() => router.push('welcome')} />
-      <ActivityIndicator size={"large"} color="#fff" />
-    </View>
+    // <View style={styles.container}>
+    //   <StatusBar style="light" />
+    //   <Text style={styles.title}>LOGOGOGOGOGO</Text>
+    //   <Button content="Go to welcome" onPress={() => router.push('welcome')} />
+    //   <ActivityIndicator size={"large"} color="#fff" />
+    // </View>
+    <Home />
   )
 }
 

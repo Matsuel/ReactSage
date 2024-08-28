@@ -1,11 +1,14 @@
 import React from 'react'
 import { StyleSheet, Text, View, useColorScheme } from 'react-native'
+import Navbar from './Components/Navbar'
+import { StatusBar } from 'expo-status-bar'
 
 const Home = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={{ color: "#fff" }}>gros negro</Text>
+            <StatusBar style="light" />
+            <Navbar />
         </View>
     )
 }
@@ -20,6 +23,6 @@ const styles = StyleSheet.create({
         paddingRight: "5%",
         backgroundColor: '#0f0f0f',
         alignItems: 'center',
-        justifyContent: "center"
+        justifyContent: "flex-start"
     },
 })
