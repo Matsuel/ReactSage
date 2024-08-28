@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { Text, TouchableOpacity, View, ActionSheetIOS } from 'react-native'
 import { styles } from './Navbar.style'
 import { useStorageData } from '../../hooks/useStorageData'
 import More from '../../assets/More'
+import NewConversation from '../../assets/NewConversation'
 
 const Navbar = () => {
 
@@ -20,7 +21,7 @@ const Navbar = () => {
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.accountBtn}>
-                <More color='#fff' />
+                <NewConversation color='#fff' />
             </TouchableOpacity>
 
         </View>
