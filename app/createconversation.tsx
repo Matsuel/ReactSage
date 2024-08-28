@@ -5,6 +5,7 @@ import { socket } from './_layout'
 import { debounce } from 'lodash'
 import { UserInterface } from '../server/type'
 import UserComponent from './Components/User'
+import Button from './Components/Button'
 
 const createconversation = () => {
 
@@ -39,7 +40,7 @@ const createconversation = () => {
   return (
     <View style={styles.container}>
       <View style={styles.top}>
-        <TextInput style={styles.input}
+        <TextInput style={styles.inputSearch}
           placeholder="Rechercher ici par nom ou téléphone"
           placeholderTextColor={"#fff"}
           onChangeText={search}
@@ -53,7 +54,7 @@ const createconversation = () => {
       </View>
 
       <FlatList
-        style={styles.flatList}
+        style={styles.userList}
         data={users}
         renderItem={({ item }) => <UserComponent _id={item._id as string} phone={item.phone} username={item.username} picture={item.picture} />}
       />
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
     height: '100%',
     paddingLeft: "5%",
     paddingRight: "5%",
-    backgroundColor: '#0f0f0f',
+    backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: "flex-start"
   },
@@ -81,7 +82,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 35,
   },
-  flatList: {
+  inputSearch: {
+    width: '75%',
+    height: 50,
+    backgroundColor: '#202020',
+    color: '#fff',
+    paddingLeft: 15,
+    borderRadius: 12,
+  },
+  searchBtn: {
+    width: '20%',
+    height: 50,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  searchText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  userList: {
+    width: '100%',
     marginTop: 15,
     position: 'relative',
   },
