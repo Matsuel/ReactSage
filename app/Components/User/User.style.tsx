@@ -13,6 +13,7 @@ export const styles = StyleSheet.create({
         paddingLeft: 20,
         borderRadius: 12,
         gap: 25,
+        marginBottom: 10,
     },
     userInfo: {
         display: "flex",

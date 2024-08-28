@@ -18,7 +18,6 @@ const createconversation = () => {
   const router = useRouter()
 
   socket.on('searchUsers', (data) => {
-    console.log(data);
     if (data.success) {
       setUsers(data.users)
     }
