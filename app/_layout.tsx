@@ -1,11 +1,9 @@
 import { Stack } from 'expo-router'
-import {io} from 'socket.io-client';
+import { io } from 'socket.io-client';
 
 export default function Layout() {
     return (
-        // <UserInactivityProvider>
         <Stack>
-            {/* Regler problèmes des modals qui ne redirigent pas vers une page  */}
             <Stack.Screen name='index' options={{ headerShown: false }} />
             <Stack.Screen name='welcome' options={{ headerShown: false, animation: "none", presentation: "modal", gestureEnabled: false }} />
             <Stack.Screen name='inactive' options={{ headerShown: false, animation: 'none' }} />
@@ -13,8 +11,8 @@ export default function Layout() {
             <Stack.Screen name='otp' options={{ headerShown: false, animation: 'none', gestureEnabled: false, presentation: "modal" }} />
             <Stack.Screen name='lock' options={{ headerShown: false, animation: 'none', gestureEnabled: false, presentation: "modal" }} />
             <Stack.Screen name='homepage' options={{ headerShown: false }} />
+            <Stack.Screen name='createconversation' options={{ headerShown: false, gestureEnabled: true, presentation: "modal" }} />
         </Stack>
-        // </UserInactivityProvider>
     )
 }
 

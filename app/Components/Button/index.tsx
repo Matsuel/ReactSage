@@ -60,11 +60,9 @@ const Button = ({
                 style={[styles.btnContainer, styles[variant]]} {...props}
             >
                 {content &&
-                    <>
-                        <Text style={[styles.text, styles[variant]]}>{content}</Text>
-                        <RightArrow {...props} color={styles[variant].color} />
-                    </>}
-                {icon}
+                    <Text style={[styles.text, styles[variant]]}>{content}</Text>
+                }
+                {icon ? icon : <RightArrow {...props} color={styles[variant].color} />}
             </Pressable>
         </Animated.View>
     )

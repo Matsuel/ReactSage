@@ -8,7 +8,8 @@ export const User = new mongoose.Schema<UserInterface>({
     joinedAt: { type: Date, default: Date.now },
     options: {
         showOnline: { type: Boolean, default: true },
-    }
+    },
+    color: { type: String, default: '#000' }
 }, { collection: 'users' })
 
 export const UserModel = mongoose.model<UserInterface>('User', User)

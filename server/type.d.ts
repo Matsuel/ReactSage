@@ -10,6 +10,7 @@ export interface UserInterface extends mongoose.Document {
     pin: string;
     options: UserOptions;
     joinedAt: Date;
+    color: string;
 }
 
 export interface ConversationInterface extends mongoose.Document {
