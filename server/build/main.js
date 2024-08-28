@@ -28,7 +28,6 @@ io.on('connection', (socket) => {
             const user = await User_1.UserModel.findOne({ phone });
             if (user) {
                 const match = bcrypt_1.default.compareSync(pin, user.pin);
-                console.log(match);
                 if (match) {
                     socket.emit('checkPin', { success: true, id: user._id, username: user.username });
                 }
@@ -41,7 +40,6 @@ io.on('connection', (socket) => {
             }
         }
         catch (error) {
-            console.log(error);
             socket.emit('checkPin', { success: false, message: 'Login failed' });
         }
     });
@@ -57,7 +55,6 @@ io.on('connection', (socket) => {
             }
         }
         catch (error) {
-            console.log(error);
             socket.emit('login', { success: false, message: 'Login failed' });
         }
     });

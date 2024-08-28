@@ -41,17 +41,7 @@ const inactive = () => {
     }
   })
 
-  const onBiometricPress = async () => {
-    const { success } = await LocalAuthentication.authenticateAsync()
-    if (success) {
-      reset({
-        index: 0,
-        routes: [{ name: 'homepage' } as never]
-      })
-    } else {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
-    }
-  }
+  const onBiometricPress = async () => { }
 
   const OFFSET = 20;
   const TIME = 80;
@@ -75,9 +65,9 @@ const inactive = () => {
         })
       }
       else if (type === 'login') {
-        emitAndListenEvent('checkPin', { phone, pin: code.join('') }, (data) => {    
+        emitAndListenEvent('checkPin', { phone, pin: code.join('') }, (data) => {
           console.log(data);
-                
+
           if (data.success === true) {
             storeSecureData('phone', phone)
             storeSecureData('pin', code.join(''))
@@ -116,6 +106,7 @@ const inactive = () => {
     }
   }, [code])
 
+  // créer un hook qui récupère la valeur passée en paramètre
   useEffect(() => {
     if (type !== 'login' && type !== 'register') {
       const getLocalCode = async () => {
