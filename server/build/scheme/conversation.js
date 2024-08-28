@@ -15,6 +15,7 @@ exports.Conversation = new mongoose_1.default.Schema({
     lastMessageDate: { type: Date, required: false },
     lastMessageAuthorId: { type: String, required: false },
     lastMessageId: { type: String, required: false },
+    picture: { type: String, required: false }
 }, { collection: 'conversations' });
 exports.ConversationModel = mongoose_1.default.model('Conversation', exports.Conversation);
 //# sourceMappingURL=conversation.js.map

@@ -11,6 +11,7 @@ const connecToDb_1 = require("./functions/connecToDb");
 const User_1 = require("./scheme/User");
 const randomPseudo_1 = require("./functions/randomPseudo");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const conversation_1 = require("./scheme/conversation");
 const IPTOUSE = (0, getLocalIp_1.getLocalIpV4)();
 console.log("\x1b[34mServer will run on IP:", IPTOUSE, "\x1b[0m");
 const envFilePath = (0, getFileInApp_1.getFileInApp)(".env.local");
@@ -75,10 +76,35 @@ io.on('connection', async (socket) => {
         try {
             let users = await User_1.UserModel.find({ username: { $regex: search, $options: 'i' } }).select('username phone _id picture');
             users = users.filter(user => user._id.toString() !== id);
+            const conversations = await conversation_1.ConversationModel.find({ users: { $in: [id] } }).select('users');
+            const usersIds = conversations.map(conversation => conversation.usersId.filter(userId => userId !== id)[0]);
+            users = users.filter(user => !usersIds.includes(user._id.toString()));
             socket.emit('searchUsers', { success: true, users });
         }
         catch (error) {
             socket.emit('searchUsers', { success: false });
+        }
+    });
+    socket.on('getConversations', async function message(data) {
+        console.log('received: %s', data);
+        const { id } = data;
+        try {
+            let conversations = await conversation_1.ConversationModel.find({ usersId: { $in: [id] } }).select('name usersId pinnedBy lastMessage lastMessageDate lastMessageAuthorId lastMessageId');
+            // recuperer pour chaucne des conversations l'autre utilisateur, récup sa photo et son pseudo
+            for (let i = 0; i < conversations.length; i++) {
+                const conversation = conversations[i];
+                const userId = conversation.usersId.filter(userId => userId !== id)[0];
+                const user = await User_1.UserModel.findById(userId).select('username picture');
+                if (!user) {
+                    continue;
+                }
+                conversations[i] = Object.assign(Object.assign({}, conversation.toObject()), { name: user.username, picture: user.picture, _id: conversation._id });
+            }
+            socket.emit('getConversations', { success: true, conversations });
+        }
+        catch (error) {
+            console.log(error);
+            socket.emit('getConversations', { success: false });
         }
     });
 });

@@ -7,6 +7,7 @@ import { UserModel } from './scheme/User'
 import { generateRandomPseudo } from './functions/randomPseudo'
 import bcrypt from 'bcrypt'
 import { Conversation, ConversationModel } from './scheme/conversation'
+import mongoose from 'mongoose'
 
 const IPTOUSE = getLocalIpV4()
 
@@ -79,11 +80,38 @@ io.on('connection', async (socket) => {
         try {
             let users = await UserModel.find({ username: { $regex: search, $options: 'i' } }).select('username phone _id picture')
             users = users.filter(user => user._id.toString() !== id)
+            const conversations = await ConversationModel.find({ users: { $in: [id] } }).select('users')
+            const usersIds = conversations.map(conversation => conversation.usersId.filter(userId => userId !== id)[0])
+            users = users.filter(user => !usersIds.includes(user._id.toString()))
             socket.emit('searchUsers', { success: true, users })
         } catch (error) {
             socket.emit('searchUsers', { success: false })
         }
     });
+
+    socket.on('getConversations', async function message(data) {
+        console.log('received: %s', data);
+        const { id } = data
+        try {
+            let conversations = await ConversationModel.find({ usersId: { $in: [id] } }).select('name usersId pinnedBy lastMessage lastMessageDate lastMessageAuthorId lastMessageId')
+            // recuperer pour chaucne des conversations l'autre utilisateur, récup sa photo et son pseudo
+            for (let i = 0; i < conversations.length; i++) {
+                const conversation = conversations[i]
+                const userId = conversation.usersId.filter(userId => userId !== id)[0]         
+                const user = await UserModel.findById(userId).select('username picture')
+                if (!user) {
+                    continue
+                }
+                conversations[i] = { ...conversation.toObject(), name: user.username, picture: user.picture, _id: conversation._id } as any
+            }
+            socket.emit('getConversations', { success: true, conversations })
+        } catch (error) {
+            console.log(error);
+            
+            socket.emit('getConversations', { success: false })
+        }
+    });
+
 });
 
 connectToDb()

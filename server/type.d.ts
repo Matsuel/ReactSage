@@ -31,6 +31,21 @@ export interface ConversationInterface extends mongoose.Document {
     lastMessageDate: Date;
     lastMessageAuthorId: string;
     lastMessageId: string;
+    picture: string;
+}
+
+export interface ConversationInterfaceComponent {
+    createdAt: Date;
+    isGroup: boolean;
+    name: string;
+    usersId: string[];
+    pinnedBy: string[];
+    lastMessage: string;
+    lastMessageDate: Date;
+    lastMessageAuthorId: string;
+    lastMessageId: string;
+    _id: string;
+    picture: string;
 }
 
 export interface MessageInterface extends mongoose.Document {

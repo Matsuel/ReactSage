@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native'
 import Navbar from './Components/Navbar'
 import { StatusBar } from 'expo-status-bar'
@@ -7,6 +7,9 @@ import NewConversation from './assets/NewConversation'
 import Search from './assets/Search'
 import { router } from 'expo-router'
 import { useStorageData } from './hooks/useStorageData'
+import { ConversationInterfaceComponent } from '../server/type'
+import { emitAndListenEvent } from './utils/events'
+import ConversationComponent from './Components/Conversation'
 
 const Home = () => {
 
@@ -14,6 +17,18 @@ const Home = () => {
     const { data: userId, loading } = useStorageData('id')
     console.log(userId, loading);
 
+    const [conversations, setConversations] = useState<ConversationInterfaceComponent[]>([])
+
+    useEffect(() => {
+        if (!loading) {
+            emitAndListenEvent('getConversations', { id: userId }, (data) => {
+                console.log(data);
+                if (data.success) {
+                    setConversations(data.conversations)
+                }
+            })
+        }
+    }, [loading])
 
     const onRefresh = useCallback(() => {
         setRefreshing(true)
@@ -34,8 +49,8 @@ const Home = () => {
             <Navbar />
             <FlatList
                 style={styles.flatList}
-                data={[{ key: 'a' }, { key: 'b' }]}
-                renderItem={({ item }) => <Text>{item.key}</Text>}
+                data={conversations}
+                renderItem={({ item }) => <ConversationComponent {...item} />}
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}

@@ -11,6 +11,7 @@ export const Conversation = new mongoose.Schema<ConversationInterface>({
     lastMessageDate: { type: Date, required: false },
     lastMessageAuthorId: { type: String, required: false },
     lastMessageId: { type: String, required: false },
+    picture: { type: String, required: false }
 }, { collection: 'conversations' })
 
 export const ConversationModel = mongoose.model<ConversationInterface>('Conversation', Conversation)
