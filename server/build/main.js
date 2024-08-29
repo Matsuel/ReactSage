@@ -90,7 +90,7 @@ io.on('connection', async (socket) => {
         console.log('received: %s', data);
         const { id } = data;
         try {
-            let conversations = await conversation_1.ConversationModel.find({ usersId: { $in: [id] } }).select('name usersId pinnedBy lastMessage lastMessageDate lastMessageAuthorId lastMessageId');
+            let conversations = await conversation_1.ConversationModel.find({ usersId: { $in: [id] } }).select('name usersId pinnedBy lastMessage lastMessageDate lastMessageAuthorId lastMessageId isGroup createdAt');
             // recuperer pour chaucne des conversations l'autre utilisateur, récup sa photo et son pseudo
             for (let i = 0; i < conversations.length; i++) {
                 const conversation = conversations[i];
