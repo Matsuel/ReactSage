@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         justifyContent: "flex-start",
-        backgroundColor: "#0f0f0f",
+        backgroundColor: "#000",
         alignItems: "center",
         padding: 10,
         paddingLeft: 20,

@@ -5,8 +5,8 @@ import { socket } from './_layout'
 import { debounce } from 'lodash'
 import { UserInterface } from '../server/type'
 import UserComponent from './Components/User'
-import Button from './Components/Button'
 import * as StyleConst from './constantes/stylesConst'
+import ModalIndicator from './Components/ModalIndicator'
 
 const createconversation = () => {
 
@@ -39,10 +39,11 @@ const createconversation = () => {
 
   return (
     <View style={styles.container}>
+      <ModalIndicator />
       <View style={styles.top}>
         <TextInput style={styles.inputSearch}
           placeholder="Rechercher ici par nom ou téléphone"
-          placeholderTextColor={"#fff"}
+          placeholderTextColor={"#757575"}
           onChangeText={search}
           value={searchValue}
           onChange={(e) => setSearchValue(e.nativeEvent.text)}
@@ -85,8 +86,8 @@ const styles = StyleSheet.create({
   inputSearch: {
     width: '75%',
     height: 50,
-    backgroundColor: '#202020',
-    color: '#fff',
+    backgroundColor: '#2e2f31',
+    color: '#757575',
     paddingLeft: 15,
     borderRadius: StyleConst.BorderRadius,
   },

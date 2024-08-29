@@ -77,9 +77,9 @@ io.on('connection', async (socket) => {
             let users = await User_1.UserModel.find({ username: { $regex: search, $options: 'i' } }).select('username phone _id picture');
             // supprimer l'utilisateur courant de la liste
             // parmis les utilisateurs trouvés il faut supprimer les utilisateurs qui sont déjà dans les conversations de l'utilisateur courant
-            const conversations = await conversation_1.ConversationModel.find({ usersId: { $in: [id] } }).select('usersId');
-            const usersId = conversations.map(conversation => conversation.usersId).flat();
-            users = users.filter(user => user._id.toString() !== id && !usersId.includes(user._id.toString()));
+            // const conversations = await ConversationModel.find({ usersId: { $in: [id] } }).select('usersId')
+            // const usersId = conversations.map(conversation => conversation.usersId).flat()
+            // users = users.filter(user => user._id.toString() !== id && !usersId.includes(user._id.toString()))
             socket.emit('searchUsers', { success: true, users });
         }
         catch (error) {
