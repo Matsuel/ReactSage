@@ -42,7 +42,7 @@ const createconversation = () => {
     } else if (text.trim().length < 3) {
       setUsers([MoreCharacters])
     }
-  }, 1000), [])
+  }, 500), [])
 
   return (
     <View style={styles.container}>

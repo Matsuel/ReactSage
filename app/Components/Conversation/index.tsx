@@ -19,7 +19,7 @@ const ConversationComponent = ({
 }: ConversationInterfaceComponent) => {
     return (
         <TouchableOpacity style={styles.container}>
-            <Avatar picture={picture} username={name} />
+            <Avatar picture={picture} username={name} width={40} />
             <Text style={{ color: StyleConst.TextColor }}>{name}</Text>
         </TouchableOpacity>
     )

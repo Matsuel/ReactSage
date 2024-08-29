@@ -15,14 +15,12 @@ const Home = () => {
 
     const [refreshing, setRefreshing] = useState(false)
     const { data: userId, loading } = useStorageData('id')
-    console.log(userId, loading);
 
     const [conversations, setConversations] = useState<ConversationInterfaceComponent[]>([])
 
     useEffect(() => {
         if (!loading) {
             emitAndListenEvent('getConversations', { id: userId }, (data) => {
-                console.log(data);
                 if (data.success) {
                     setConversations(data.conversations)
                 }
@@ -31,11 +29,18 @@ const Home = () => {
     }, [loading])
 
     const onRefresh = useCallback(() => {
-        setRefreshing(true)
-        setTimeout(() => {
-            setRefreshing(false)
-        }, 2000)
-    }, [])
+        if (!loading) {
+            setRefreshing(true)
+            emitAndListenEvent('getConversations', { id: userId }, (data) => {
+                if (data.success) {
+                    setConversations(data.conversations)
+                    setTimeout(() => {
+                        setRefreshing(false);
+                    }, 500);
+                }
+            })
+        }
+    }, [loading])
 
     if (loading) {
         return <View style={styles.container}>
@@ -48,7 +53,9 @@ const Home = () => {
             <StatusBar style="light" />
             <Navbar />
             <FlatList
+            showsVerticalScrollIndicator={false}
                 style={styles.flatList}
+                contentContainerStyle={styles.flatListContent}
                 data={conversations}
                 renderItem={({ item }) => <ConversationComponent {...item} />}
                 refreshControl={
@@ -78,8 +85,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#000',
     },
     flatList: {
+        width: '100%',
+        maxHeight: '85%',
         marginTop: 15,
-        position: 'relative',
+    },
+    flatListContent: {
+        paddingBottom: 100,
     },
     btns: {
         position: 'absolute',
@@ -89,6 +100,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: "transparent",
         gap: 25,
         marginBottom: 40,
     }

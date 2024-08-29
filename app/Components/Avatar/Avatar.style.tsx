@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 20,
+        borderRadius: 50,
     },
     avatar: {
         width: "100%",

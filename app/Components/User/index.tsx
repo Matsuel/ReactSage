@@ -11,7 +11,7 @@ const UserComponent = ({
     _id
 }: UserInterfaceComponent) => {
     return (
-        <TouchableOpacity style={styles.container}>
+        <TouchableOpacity style={styles.container} disabled={_id === ""}>
             <Avatar picture={picture} username={username} />
             <View style={styles.userInfo}>
                 <Text style={styles.username}>{username}</Text>
