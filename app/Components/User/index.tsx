@@ -15,7 +15,7 @@ const UserComponent = ({
             <Avatar picture={picture} username={username} />
             <View style={styles.userInfo}>
                 <Text style={styles.username}>{username}</Text>
-                <Text style={styles.phone}>{phone}</Text>
+                {phone && <Text style={styles.phone}>{phone}</Text>}
             </View>
         </TouchableOpacity>
     )

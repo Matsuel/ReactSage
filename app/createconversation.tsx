@@ -3,16 +3,17 @@ import React, { useCallback, useState } from 'react'
 import { FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { socket } from './_layout'
 import { debounce } from 'lodash'
-import { UserInterface } from '../server/type'
+import { UserInterfaceComponent } from '../server/type'
 import UserComponent from './Components/User'
 import * as StyleConst from './constantes/stylesConst'
 import ModalIndicator from './Components/ModalIndicator'
+import { MoreCharacters, NoResults } from './constantes/UserConstants'
 
 const createconversation = () => {
 
   const params = useLocalSearchParams()
   const { id } = params
-  const [users, setUsers] = useState<UserInterface[]>([])
+  const [users, setUsers] = useState<UserInterfaceComponent[]>([MoreCharacters])
   const [searchValue, setSearchValue] = useState<string>('')
 
 
@@ -20,7 +21,11 @@ const createconversation = () => {
 
   socket.on('searchUsers', (data) => {
     if (data.success) {
-      setUsers(data.users)
+      if (data.users.length === 0) {
+        setUsers([NoResults])
+      } else {
+        setUsers(data.users)
+      }
     }
   })
 
@@ -32,8 +37,10 @@ const createconversation = () => {
   }
 
   const search = useCallback(debounce((text: string) => {
-    if (text.trim().length > 0) {
+    if (text.trim().length >= 3) {
       socket.emit('searchUsers', { id, search: text })
+    } else if (text.trim().length < 3) {
+      setUsers([MoreCharacters])
     }
   }, 1000), [])
 
@@ -68,12 +75,15 @@ export default createconversation
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: '100%',
+    height: '75%',
+    maxHeight: '75%',
     paddingLeft: "5%",
     paddingRight: "5%",
     backgroundColor: '#000',
     alignItems: 'center',
-    justifyContent: "flex-start"
+    justifyContent: "flex-start",
+    borderTopRightRadius: StyleConst.BorderRadius,
+    borderTopLeftRadius: StyleConst.BorderRadius,
   },
   top: {
     width: '100%',
@@ -104,7 +114,7 @@ const styles = StyleSheet.create({
   },
   userList: {
     width: '100%',
-    marginTop: 15,
+    marginTop: 25,
     position: 'relative',
   },
 })
