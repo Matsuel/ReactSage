@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import * as StyleConst from "../../constantes/stylesConst";
 
 export const styles = StyleSheet.create({
     container: {
@@ -20,7 +21,7 @@ export const styles = StyleSheet.create({
         alignItems: "center",
     },
     accountText: {
-        color: "#fff",
+        color: StyleConst.TextColor,
         fontSize: 20,
     },
 });

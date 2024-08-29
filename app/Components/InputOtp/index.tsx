@@ -1,5 +1,6 @@
 import React from 'react'
 import { StyleSheet, TextInput, TextInputProps } from 'react-native'
+import * as StyleConst from '../../constantes/stylesConst'
 
 interface Props extends TextInputProps {
 }
@@ -21,8 +22,8 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         backgroundColor: "#202020",
-        color: "#fff",
-        borderRadius: 12,
+        color: StyleConst.TextColor,
+        borderRadius: StyleConst.BorderRadius,
         fontSize: 26,
         fontWeight: "bold",
         textAlign: "center",

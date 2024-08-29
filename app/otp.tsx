@@ -10,6 +10,7 @@ import { StatusBar } from 'expo-status-bar'
 import { storeSecureData } from './utils/storeData'
 import InputOtp from './Components/InputOtp'
 import { emitAndListenEvent } from './utils/events'
+import * as StyleConst from './constantes/stylesConst'
 
 const Otp = () => {
 
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
         fontSize: 26,
         fontWeight: "bold",
         marginTop: 70,
-        color: "#fff",
+        color: StyleConst.TextColor,
         alignSelf: "flex-start",
     },
     codeInputs: {

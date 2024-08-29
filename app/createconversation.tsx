@@ -6,6 +6,7 @@ import { debounce } from 'lodash'
 import { UserInterface } from '../server/type'
 import UserComponent from './Components/User'
 import Button from './Components/Button'
+import * as StyleConst from './constantes/stylesConst'
 
 const createconversation = () => {
 
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#202020',
     color: '#fff',
     paddingLeft: 15,
-    borderRadius: 12,
+    borderRadius: StyleConst.BorderRadius,
   },
   searchBtn: {
     width: '20%',

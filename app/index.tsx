@@ -6,6 +6,7 @@ import { getSecureData } from './utils/getData'
 import { deleteSecureData } from './utils/deleteData'
 import Button from './Components/Button'
 import Home from './homepage'
+import * as StyleConst from './constantes/stylesConst'
 
 const Index = () => {
 
@@ -52,6 +53,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 64,
     fontWeight: "bold",
-    color: "#fff",
+    color: StyleConst.TextColor,
   },
 });

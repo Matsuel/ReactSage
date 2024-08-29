@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import * as StyleConst from "../../constantes/stylesConst";
 
 export const styles = StyleSheet.create({
     container: {
@@ -11,7 +12,7 @@ export const styles = StyleSheet.create({
         alignItems: "center",
         padding: 10,
         paddingLeft: 20,
-        borderRadius: 12,
+        borderRadius: StyleConst.BorderRadius,
         gap: 25,
         marginBottom: 10,
     },
@@ -22,7 +23,7 @@ export const styles = StyleSheet.create({
         alignItems: "flex-start",
     },
     username: {
-        color: "#fff",
+        color: StyleConst.TextColor,
         fontSize: 20,
     },
     phone: {

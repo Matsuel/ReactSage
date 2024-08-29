@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import Button from './Components/Button'
 import { StatusBar } from 'expo-status-bar'
 import { useRouter } from 'expo-router'
+import * as StyleConst from './constantes/stylesConst'
 
 const Welcome = () => {
 
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
         fontSize: 26,
         fontWeight: "bold",
         marginTop: 100,
-        color: "#fff",
+        color: StyleConst.TextColor,
         alignSelf: "flex-start",
         marginLeft: "10%"
     },

@@ -12,6 +12,7 @@ import { router } from 'expo-router'
 import { emitAndListenEvent } from './utils/events'
 import { storeSecureData } from './utils/storeData'
 import { getSecureData } from './utils/getData'
+import * as StyleConst from './constantes/stylesConst'
 
 const inactive = () => {
   const [code, setCode] = useState<number[]>([])
@@ -199,7 +200,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: "bold",
     marginTop: 100,
-    color: "#fff",
+    color: StyleConst.TextColor,
     alignSelf: "flex-start",
     marginLeft: "10%"
   },
@@ -229,7 +230,7 @@ const styles = StyleSheet.create({
   },
   number: {
     fontSize: 32,
-    color: "#fff",
+    color: StyleConst.TextColor,
     fontWeight: "bold",
   },
   goBackBtn: {

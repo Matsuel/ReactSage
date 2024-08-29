@@ -4,6 +4,7 @@ import Button from './Components/Button'
 import { router, useLocalSearchParams } from 'expo-router'
 import LeftArrow from './assets/LeftArrow'
 import { StatusBar } from 'expo-status-bar'
+import * as StyleConst from './constantes/stylesConst'
 
 const Login = () => {
     const [phone, setPhone] = useState<string>("")
@@ -45,13 +46,13 @@ const styles = StyleSheet.create({
         paddingRight: "5%",
         backgroundColor: '#0f0f0f',
         alignItems: 'center',
-        borderColor: "#fff",
+        borderColor: StyleConst.TextColor,
     },
     title: {
         fontSize: 26,
         fontWeight: "bold",
         marginTop: 70,
-        color: "#fff",
+        color: StyleConst.TextColor,
         alignSelf: "flex-start",
     },
     inputsContainer: {
@@ -71,12 +72,12 @@ const styles = StyleSheet.create({
     countryTextBtn: {
         fontSize: 24,
         fontWeight: "bold",
-        color: "#fff",
+        color: StyleConst.TextColor,
     },
     inputText: {
         width: "100%",
         height: 40,
-        color: "#fff",
+        color: StyleConst.TextColor,
         fontSize: 26,
         fontWeight: "bold",
         paddingLeft: 10,

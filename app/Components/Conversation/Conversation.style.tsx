@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import * as StyleConst from "../../constantes/stylesConst";
 
 export const styles = StyleSheet.create({
     container: {
@@ -7,11 +8,11 @@ export const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         justifyContent: "flex-start",
-        backgroundColor: "#0f0f0f",
+        backgroundColor: StyleConst.BackgroundColor,
         alignItems: "center",
         padding: 10,
         paddingLeft: 20,
-        borderRadius: 12,
+        borderRadius: StyleConst.BorderRadius,
         gap: 25,
         marginBottom: 10,
     },
