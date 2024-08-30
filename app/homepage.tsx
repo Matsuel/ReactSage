@@ -10,7 +10,7 @@ import { useStorageData } from './hooks/useStorageData'
 import { ConversationInterfaceComponent } from '../server/type'
 import { emitAndListenEvent } from './utils/events'
 import ConversationComponent from './Components/Conversation'
-import * as StyleConst from './constantes/stylesConst'
+import Title from './Components/Title'
 
 const Home = () => {
 
@@ -53,9 +53,7 @@ const Home = () => {
         <View style={styles.container}>
             <StatusBar style='light' />
             <Navbar />
-            <View style={styles.header}>
-                <Text style={styles.title}>Conversations</Text>
-            </View>
+            <Title title="Conversations" />
             <FlatList
                 showsVerticalScrollIndicator={false}
                 style={styles.flatList}
@@ -71,7 +69,7 @@ const Home = () => {
                 }
             />
             <View style={styles.btns}>
-                <Button variant='light' content="Recherche" icon={<Search color='#000' width={25}/>} />
+                <Button variant='light' content="Recherche" icon={<Search color='#000' width={25} />} />
                 <Button onPress={() => router.push({ pathname: "/createconversation", params: { id: userId } })} variant='light' content="Créer" icon={<NewConversation color='#000' width={25} />} />
             </View>
         </View>
@@ -107,17 +105,5 @@ const styles = StyleSheet.create({
         backgroundColor: "transparent",
         gap: 25,
         marginBottom: 40,
-    },
-    header: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        marginTop: 15,
-    },
-    title: {
-        color: StyleConst.TextColor,
-        fontSize: 32,
-        fontWeight: "bold",
     },
 })

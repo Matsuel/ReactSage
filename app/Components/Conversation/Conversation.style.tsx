@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         justifyContent: "flex-start",
-        backgroundColor: "transparent",
+        backgroundColor: StyleConst.ModalBackgroundColor,
         alignItems: "center",
         padding: 15,
         paddingLeft: 20,
