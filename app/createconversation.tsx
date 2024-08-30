@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     maxHeight: '75%',
     paddingLeft: "5%",
     paddingRight: "5%",
-    backgroundColor: '#000',
+    backgroundColor: StyleConst.ModalBackgroundColor,
     alignItems: 'center',
     justifyContent: "flex-start",
     borderTopRightRadius: StyleConst.BorderRadius,

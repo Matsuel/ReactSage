@@ -1,5 +1,4 @@
 export function formatDate(date: any): string {
-    console.log(date);
 
     date = new Date(date);
     
