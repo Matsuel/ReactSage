@@ -14,7 +14,7 @@ const Welcome = () => {
             <StatusBar style="light" />
             <Text style={styles.title}>Bienvenue sur ReactSage</Text>
             <View style={styles.btns}>
-                <Button content="Connexion" onPress={() => router.push({ pathname: 'login', params: { type: "login" } })} variant='default' />
+                <Button content="Connexion" onPress={() => router.push({ pathname: 'login', params: { type: "login" } })} variant='transparentLight' />
                 <Button content="Inscription" onPress={() => router.push({ pathname: 'login', params: { type: "register" } })} variant='light' />
             </View>
         </View>

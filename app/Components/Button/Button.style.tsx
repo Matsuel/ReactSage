@@ -29,4 +29,12 @@ export const styles = StyleSheet.create({
         backgroundColor: '#515151',
         color: '#000',
     },
+    transparentLight: {
+        backgroundColor: 'transparent',
+        color: '#fff',
+    },
+    transparentDark: {
+        backgroundColor: 'transparent',
+        color: '#000',
+    },
 });

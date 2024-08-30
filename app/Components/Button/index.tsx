@@ -5,7 +5,7 @@ import RightArrow from '../../assets/RightArrow';
 import { styles } from './Button.style';
 
 interface ButtonProps extends PressableProps {
-    variant?: 'default' | 'primary' | 'light' | 'disabled'
+    variant?: 'default' | 'primary' | 'light' | 'disabled' | 'transparentLight' | 'transparentDark'
     content?: string
     icon?: React.ReactNode
     onPress?: () => void

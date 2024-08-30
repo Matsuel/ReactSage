@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native'
+import { Appearance, FlatList, RefreshControl, StyleSheet, Text, useColorScheme, View } from 'react-native'
 import Navbar from './Components/Navbar'
 import { StatusBar } from 'expo-status-bar'
 import Button from './Components/Button'
@@ -28,6 +28,20 @@ const Home = () => {
         }
     }, [loading])
 
+    useEffect(() => {
+        const colorScheme = Appearance.getColorScheme();
+        console.log('Initial Color Scheme:', colorScheme);
+
+        const subscription = Appearance.addChangeListener(({ colorScheme }) => {
+            console.log('Changed Color Scheme:', colorScheme);
+            // Met à jour l'état ou les styles en fonction de la nouvelle valeur de colorScheme
+        });
+
+        return () => {
+            subscription.remove();
+        };
+    }, []);
+
     const onRefresh = useCallback(() => {
         if (!loading) {
             setRefreshing(true)
@@ -50,10 +64,10 @@ const Home = () => {
 
     return (
         <View style={styles.container}>
-            <StatusBar style="light" />
+            <StatusBar style='light' />
             <Navbar />
             <FlatList
-            showsVerticalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
                 style={styles.flatList}
                 contentContainerStyle={styles.flatListContent}
                 data={conversations}
@@ -86,7 +100,7 @@ const styles = StyleSheet.create({
     },
     flatList: {
         width: '100%',
-        maxHeight: '85%',
+        maxHeight: '100%',
         marginTop: 15,
     },
     flatListContent: {
