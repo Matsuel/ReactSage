@@ -26,8 +26,11 @@ const ConversationComponent = ({
     return (
         <TouchableOpacity style={styles.container} onPress={() => router.push({ pathname: 'activeConversation', params: { id: _id } })}>
             <Avatar picture={picture} username={name} width={40} />
-            <Text style={{ color: StyleConst.TextColor }}>{name}</Text>
-            <Text style={{ color: StyleConst.TextColor }}>{lastMessageDate !== undefined ? formatDate(lastMessageDate) : formatDate(createdAt)}</Text>
+            <View style={styles.conversationInfo}>
+                <Text style={styles.username}>{name}</Text>
+                <Text style={styles.lastMessage}>{lastMessage !== undefined ? lastMessage : 'Pas encore de message'}</Text>
+            </View>
+            <Text style={styles.messageDate}>{lastMessageDate !== undefined ? formatDate(lastMessageDate) : formatDate(createdAt)}</Text>
         </TouchableOpacity>
     )
 }

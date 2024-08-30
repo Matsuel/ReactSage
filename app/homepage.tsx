@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Appearance, FlatList, RefreshControl, StyleSheet, Text, useColorScheme, View } from 'react-native'
+import { FlatList, RefreshControl, StyleSheet, Text, View } from 'react-native'
 import Navbar from './Components/Navbar'
 import { StatusBar } from 'expo-status-bar'
 import Button from './Components/Button'
@@ -10,6 +10,7 @@ import { useStorageData } from './hooks/useStorageData'
 import { ConversationInterfaceComponent } from '../server/type'
 import { emitAndListenEvent } from './utils/events'
 import ConversationComponent from './Components/Conversation'
+import * as StyleConst from './constantes/stylesConst'
 
 const Home = () => {
 
@@ -27,20 +28,6 @@ const Home = () => {
             })
         }
     }, [loading])
-
-    useEffect(() => {
-        const colorScheme = Appearance.getColorScheme();
-        console.log('Initial Color Scheme:', colorScheme);
-
-        const subscription = Appearance.addChangeListener(({ colorScheme }) => {
-            console.log('Changed Color Scheme:', colorScheme);
-            // Met à jour l'état ou les styles en fonction de la nouvelle valeur de colorScheme
-        });
-
-        return () => {
-            subscription.remove();
-        };
-    }, []);
 
     const onRefresh = useCallback(() => {
         if (!loading) {
@@ -66,6 +53,9 @@ const Home = () => {
         <View style={styles.container}>
             <StatusBar style='light' />
             <Navbar />
+            <View style={styles.header}>
+                <Text style={styles.title}>Conversations</Text>
+            </View>
             <FlatList
                 showsVerticalScrollIndicator={false}
                 style={styles.flatList}
@@ -81,7 +71,7 @@ const Home = () => {
                 }
             />
             <View style={styles.btns}>
-                <Button variant='light' content="Recherche" icon={<Search color='#000' width={25} />} />
+                <Button variant='light' content="Recherche" icon={<Search color='#000' width={25}/>} />
                 <Button onPress={() => router.push({ pathname: "/createconversation", params: { id: userId } })} variant='light' content="Créer" icon={<NewConversation color='#000' width={25} />} />
             </View>
         </View>
@@ -117,5 +107,17 @@ const styles = StyleSheet.create({
         backgroundColor: "transparent",
         gap: 25,
         marginBottom: 40,
-    }
+    },
+    header: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        marginTop: 15,
+    },
+    title: {
+        color: StyleConst.TextColor,
+        fontSize: 32,
+        fontWeight: "bold",
+    },
 })

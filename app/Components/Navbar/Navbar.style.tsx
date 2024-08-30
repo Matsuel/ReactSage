@@ -1,5 +1,4 @@
 import { StyleSheet } from "react-native";
-import * as StyleConst from "../../constantes/stylesConst";
 
 export const styles = StyleSheet.create({
     container: {
@@ -10,18 +9,5 @@ export const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-    },
-    accountBtn: {
-        width: 35,
-        height: 35,
-        borderRadius: 20,
-        backgroundColor: "#8f8e93",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    accountText: {
-        color: StyleConst.TextColor,
-        fontSize: 20,
     },
 });
