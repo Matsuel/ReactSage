@@ -12,5 +12,13 @@ export const modalStyles = StyleSheet.create({
         maxHeight: "100%",
         justifyContent: "flex-end",
         backgroundColor: "transparent"
-    }
+    },
+    flatList: {
+        width: '100%',
+        maxHeight: '100%',
+        marginTop: 15,
+    },
+    flatListContent: {
+        paddingBottom: 100,
+    },
 });

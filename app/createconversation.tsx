@@ -63,7 +63,7 @@ const createconversation = () => {
       </View>
 
       <FlatList
-        style={styles.userList}
+        style={StyleConst.modalStyles.flatList}
         data={users}
         renderItem={({ item }) => <UserComponent _id={item._id as string} phone={item.phone} username={item.username} picture={item.picture} />}
       />
@@ -112,10 +112,5 @@ const styles = StyleSheet.create({
   searchText: {
     color: '#fff',
     fontSize: 16,
-  },
-  userList: {
-    width: '100%',
-    marginTop: 25,
-    position: 'relative',
   },
 })

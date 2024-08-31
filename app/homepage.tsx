@@ -11,6 +11,7 @@ import { ConversationInterfaceComponent } from '../server/type'
 import { emitAndListenEvent } from './utils/events'
 import ConversationComponent from './Components/Conversation'
 import Title from './Components/Title'
+import * as StyleConst from './constantes/stylesConst'
 
 const Home = () => {
 
@@ -56,8 +57,8 @@ const Home = () => {
             <Title title="Conversations" />
             <FlatList
                 showsVerticalScrollIndicator={false}
-                style={styles.flatList}
-                contentContainerStyle={styles.flatListContent}
+                style={StyleConst.modalStyles.flatList}
+                contentContainerStyle={StyleConst.modalStyles.flatListContent}
                 data={conversations}
                 renderItem={({ item }) => <ConversationComponent {...item} />}
                 refreshControl={
@@ -85,14 +86,6 @@ const styles = StyleSheet.create({
         paddingLeft: "5%",
         paddingRight: "5%",
         backgroundColor: '#000',
-    },
-    flatList: {
-        width: '100%',
-        maxHeight: '100%',
-        marginTop: 15,
-    },
-    flatListContent: {
-        paddingBottom: 100,
     },
     btns: {
         position: 'absolute',
