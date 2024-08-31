@@ -5,7 +5,7 @@ import { UserInterfaceComponent } from '../../../server/type'
 import Avatar from '../Avatar'
 import { emitEvent, listenEvent } from '../../utils/events'
 import { useStorageData } from '../../hooks/useStorageData'
-import { useRouter, useNavigation } from 'expo-router'
+import { useNavigation } from 'expo-router'
 
 const UserComponent = ({
     picture,
@@ -14,8 +14,7 @@ const UserComponent = ({
     _id
 }: UserInterfaceComponent) => {
 
-    const router = useRouter()
-    const {reset} = useNavigation()
+    const { reset } = useNavigation()
 
     const { data: id } = useStorageData('id')
 
