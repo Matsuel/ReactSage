@@ -54,3 +54,11 @@ export interface MessageInterface extends mongoose.Document {
     date: Date;
     viewedBy: string[];
 }
+
+export interface MessageInterfaceComponent {
+    content: string;
+    authorId: string;
+    date: Date;
+    viewedBy: string[];
+    _id: string;
+}

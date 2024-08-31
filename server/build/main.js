@@ -134,6 +134,20 @@ io.on('connection', async (socket) => {
             socket.emit('createConversation', { success: false });
         }
     });
+    socket.on('getMessages', async function message(data) {
+        const { id, conversationId } = data;
+        try {
+            if (!await conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } }))
+                return socket.emit('getMessages', { success: false, message: 'Conversation not found' });
+            let conversationCollection = mongoose_1.default.model('Conversation' + conversationId, message_1.Message);
+            let messages = await conversationCollection.find().sort({ createdAt: 1 });
+            socket.emit('getMessages', { success: true, messages });
+        }
+        catch (error) {
+            console.log(error);
+            socket.emit('getMessages', { success: false });
+        }
+    });
 });
 (0, connecToDb_1.connectToDb)();
 //# sourceMappingURL=main.js.map

@@ -60,7 +60,7 @@ const Home = () => {
                 style={StyleConst.modalStyles.flatList}
                 contentContainerStyle={StyleConst.modalStyles.flatListContent}
                 data={conversations}
-                renderItem={({ item }) => <ConversationComponent {...item} />}
+                renderItem={({ item }) => <ConversationComponent {...item} id={userId as string} />}
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}

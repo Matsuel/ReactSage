@@ -13,7 +13,7 @@ export default function Layout() {
             <Stack.Screen name='lock' options={{ headerShown: false, animation: 'none', gestureEnabled: false, presentation: "modal" }} />
             <Stack.Screen name='homepage' options={{ headerShown: false }} />
             <Stack.Screen name='createconversation' options={{ headerShown: false, gestureEnabled: true, presentation: "modal", contentStyle: StyleConst.modalStyles.container }} />
-            <Stack.Screen name='activeConversation' options={{ headerShown: false, gestureEnabled: true, presentation: "modal", contentStyle: StyleConst.modalStyles.container }} />
+            <Stack.Screen name='activeConversation' options={{ headerShown: false, gestureEnabled: true, }} />
             <Stack.Screen name='profile' options={{ headerShown: false, gestureEnabled: true, presentation: "modal", contentStyle: StyleConst.modalStyles.container }} />
         </Stack>
     )
