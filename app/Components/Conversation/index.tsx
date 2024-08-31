@@ -28,9 +28,9 @@ const ConversationComponent = ({
             <Avatar picture={picture} username={name} width={40} />
             <View style={styles.conversationInfo}>
                 <Text style={styles.username}>{name}</Text>
-                <Text style={styles.lastMessage}>{lastMessage !== undefined ? lastMessage : 'Pas encore de message'}</Text>
+                <Text style={styles.lastMessage}>{lastMessage !== "" ? lastMessage : 'Pas encore de message'}</Text>
             </View>
-            <Text style={styles.messageDate}>{lastMessageDate !== undefined ? formatDate(lastMessageDate) : formatDate(createdAt)}</Text>
+            <Text style={styles.messageDate}>{lastMessageDate !== null ? formatDate(lastMessageDate) : formatDate(createdAt)}</Text>
         </TouchableOpacity>
     )
 }

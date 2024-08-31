@@ -8,6 +8,7 @@ import { generateRandomPseudo } from './functions/randomPseudo'
 import bcrypt from 'bcrypt'
 import { Conversation, ConversationModel } from './scheme/conversation'
 import mongoose from 'mongoose'
+import { Message } from './scheme/message'
 
 const IPTOUSE = getLocalIpV4()
 
@@ -98,7 +99,7 @@ io.on('connection', async (socket) => {
             // recuperer pour chaucne des conversations l'autre utilisateur, récup sa photo et son pseudo
             for (let i = 0; i < conversations.length; i++) {
                 const conversation = conversations[i]
-                const userId = conversation.usersId.filter(userId => userId !== id)[0]         
+                const userId = conversation.usersId.filter(userId => userId !== id)[0]
                 const user = await UserModel.findById(userId).select('username picture')
                 if (!user) {
                     continue
@@ -108,10 +109,31 @@ io.on('connection', async (socket) => {
             socket.emit('getConversations', { success: true, conversations })
         } catch (error) {
             console.log(error);
-            
+
             socket.emit('getConversations', { success: false })
         }
     });
+
+    socket.on('createConversation', async function message(data) {
+        const { id, otherId } = data
+        console.log(id, otherId);
+        try {
+            const conversation = new ConversationModel({
+                usersId: [id, otherId],
+                isGroup: false,
+                createdAt: new Date(),
+                pinnedBy: [],
+            })
+            await conversation.save()
+            let conversationCollection = mongoose.model('Conversation' + conversation._id, Message)
+            conversationCollection.createCollection()
+            socket.emit('createConversation', { success: true })
+        } catch (error) {
+            console.log(error);
+            socket.emit('createConversation', { success: false })
+        }
+    });
+
 
 });
 

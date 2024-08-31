@@ -8,6 +8,7 @@ interface Props extends TextInputProps {
 const InputOtp = React.forwardRef<TextInput, Props>((props, ref) => {
     return (
         <TextInput
+            keyboardAppearance={StyleConst.keyBoardAppearance}
             style={styles.otp}
             ref={ref}
             {...props}

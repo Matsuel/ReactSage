@@ -26,7 +26,7 @@ const Login = () => {
                 <TouchableOpacity style={styles.countryBtn}>
                     <Text style={styles.countryTextBtn}>+33</Text>
                 </TouchableOpacity>
-                <TextInput onChangeText={(e) => setPhone(e)} style={styles.inputText} placeholder='0123 456789' placeholderTextColor="#2e2f30" keyboardType='number-pad' maxLength={10} autoFocus />
+                <TextInput onChangeText={(e) => setPhone(e)} style={styles.inputText} placeholder='0123 456789' placeholderTextColor="#2e2f30" keyboardType='number-pad' maxLength={10} autoFocus keyboardAppearance={StyleConst.keyBoardAppearance} />
             </View>
             <View style={styles.nextViewBtn}>
                 <Button icon={<LeftArrow color='#fff' />} onPress={() => router.replace('/')} />

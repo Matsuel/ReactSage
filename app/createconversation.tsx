@@ -49,6 +49,7 @@ const createconversation = () => {
       <ModalIndicator />
       <View style={styles.top}>
         <TextInput style={styles.inputSearch}
+          keyboardAppearance={StyleConst.keyBoardAppearance}
           placeholder="Rechercher ici par nom ou téléphone"
           placeholderTextColor={"#757575"}
           onChangeText={search}

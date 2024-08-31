@@ -12,6 +12,8 @@ const User_1 = require("./scheme/User");
 const randomPseudo_1 = require("./functions/randomPseudo");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const conversation_1 = require("./scheme/conversation");
+const mongoose_1 = __importDefault(require("mongoose"));
+const message_1 = require("./scheme/message");
 const IPTOUSE = (0, getLocalIp_1.getLocalIpV4)();
 console.log("\x1b[34mServer will run on IP:", IPTOUSE, "\x1b[0m");
 const envFilePath = (0, getFileInApp_1.getFileInApp)(".env.local");
@@ -106,6 +108,26 @@ io.on('connection', async (socket) => {
         catch (error) {
             console.log(error);
             socket.emit('getConversations', { success: false });
+        }
+    });
+    socket.on('createConversation', async function message(data) {
+        const { id, otherId } = data;
+        console.log(id, otherId);
+        try {
+            const conversation = new conversation_1.ConversationModel({
+                usersId: [id, otherId],
+                isGroup: false,
+                createdAt: new Date(),
+                pinnedBy: [],
+            });
+            await conversation.save();
+            let conversationCollection = mongoose_1.default.model('Conversation' + conversation._id, message_1.Message);
+            conversationCollection.createCollection();
+            socket.emit('createConversation', { success: true });
+        }
+        catch (error) {
+            console.log(error);
+            socket.emit('createConversation', { success: false });
         }
     });
 });
