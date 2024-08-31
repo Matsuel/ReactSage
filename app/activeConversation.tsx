@@ -4,13 +4,13 @@ import { StyleSheet, Text, View } from 'react-native'
 import * as StyleConst from './constantes/stylesConst'
 import { emitAndListenEvent } from './utils/events'
 import { MessageInterfaceComponent } from '../server/type'
+import ConversationHeader from './Components/ConversationHeader'
 
 const ActiveConversation = () => {
 
     const [messages, setMessages] = useState<MessageInterfaceComponent[]>([])
     const params = useLocalSearchParams()
     const { conversationId, picture, name, id } = params
-    console.log(params);
 
 
     useEffect(() => {
@@ -23,7 +23,11 @@ const ActiveConversation = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={{ color: "#fff" }}>{id}</Text>
+            <ConversationHeader 
+                picture={picture as string}
+                name={name as string}
+            />
+            {/* <Text style={{ color: "#fff" }}>{id}</Text> */}
         </View>
     )
 }
@@ -33,6 +37,7 @@ export default ActiveConversation
 
 const styles = StyleSheet.create({
     container: {
+        position: 'relative',
         width: '100%',
         height: '100%',
         paddingLeft: "5%",
@@ -40,6 +45,5 @@ const styles = StyleSheet.create({
         backgroundColor: StyleConst.ModalBackgroundColor,
         alignItems: 'center',
         justifyContent: "flex-start",
-        paddingTop: 50,
     },
 })

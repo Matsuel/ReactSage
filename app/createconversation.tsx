@@ -8,6 +8,7 @@ import UserComponent from './Components/User'
 import * as StyleConst from './constantes/stylesConst'
 import ModalIndicator from './Components/ModalIndicator'
 import { MoreCharacters, NoResults } from './constantes/UserConstants'
+import Button from './Components/Button'
 
 const createconversation = () => {
 
