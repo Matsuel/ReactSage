@@ -114,6 +114,10 @@ io.on('connection', async (socket) => {
         const { id, otherId } = data;
         console.log(id, otherId);
         try {
+            if (await conversation_1.ConversationModel.findOne({ usersId: [id, otherId] }))
+                return socket.emit('createConversation', { success: false, message: 'Conversation already exist' });
+            if (await conversation_1.ConversationModel.findOne({ usersId: [otherId, id] }))
+                return socket.emit('createConversation', { success: false, message: 'Conversation already exist' });
             const conversation = new conversation_1.ConversationModel({
                 usersId: [id, otherId],
                 isGroup: false,

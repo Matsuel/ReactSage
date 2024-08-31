@@ -5,7 +5,7 @@ import { UserInterfaceComponent } from '../../../server/type'
 import Avatar from '../Avatar'
 import { emitEvent, listenEvent } from '../../utils/events'
 import { useStorageData } from '../../hooks/useStorageData'
-import { useRouter } from 'expo-router'
+import { useRouter, useNavigation } from 'expo-router'
 
 const UserComponent = ({
     picture,
@@ -15,14 +15,14 @@ const UserComponent = ({
 }: UserInterfaceComponent) => {
 
     const router = useRouter()
+    const {reset} = useNavigation()
 
     const { data: id } = useStorageData('id')
-    console.log(id);
 
     useEffect(() => {
         listenEvent('createConversation', (data) => {
-            if (data.success && router.canGoBack()) {
-                router.back()        
+            if (data.success) {
+                reset({ index: 0, routes: [{ name: 'homepage' } as never] })
             }
         })
     }, [])

@@ -6,7 +6,7 @@ import { connectToDb } from './functions/connecToDb'
 import { UserModel } from './scheme/User'
 import { generateRandomPseudo } from './functions/randomPseudo'
 import bcrypt from 'bcrypt'
-import { Conversation, ConversationModel } from './scheme/conversation'
+import { ConversationModel } from './scheme/conversation'
 import mongoose from 'mongoose'
 import { Message } from './scheme/message'
 
@@ -118,6 +118,8 @@ io.on('connection', async (socket) => {
         const { id, otherId } = data
         console.log(id, otherId);
         try {
+            if (await ConversationModel.findOne({ usersId: [id, otherId] })) return socket.emit('createConversation', { success: false, message: 'Conversation already exist' })
+            if (await ConversationModel.findOne({ usersId: [otherId, id] })) return socket.emit('createConversation', { success: false, message: 'Conversation already exist' })
             const conversation = new ConversationModel({
                 usersId: [id, otherId],
                 isGroup: false,
