@@ -148,6 +148,33 @@ io.on('connection', async (socket) => {
             socket.emit('getMessages', { success: false });
         }
     });
+    socket.on('sendMessage', async function message(data) {
+        console.log(data);
+        const { id, conversationId, message } = data;
+        try {
+            if (!await conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } }))
+                return socket.emit('sendMessage', { success: false, message: 'Conversation not found' });
+            let conversationCollection = mongoose_1.default.model('Conversation' + conversationId, message_1.Message);
+            const newMessage = new conversationCollection({
+                authorId: id,
+                content: message,
+                date: new Date(),
+                viewedBy: [],
+            });
+            await newMessage.save();
+            const conversation = await conversation_1.ConversationModel.findById(conversationId);
+            conversation.lastMessage = message;
+            conversation.lastMessageDate = new Date();
+            conversation.lastMessageAuthorId = id;
+            conversation.lastMessageId = newMessage._id;
+            await conversation.save();
+            socket.emit('sendMessage', { success: true });
+        }
+        catch (error) {
+            console.log(error);
+            socket.emit('sendMessage', { success: false });
+        }
+    });
 });
 (0, connecToDb_1.connectToDb)();
 //# sourceMappingURL=main.js.map
