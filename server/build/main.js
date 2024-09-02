@@ -23,6 +23,12 @@ let users = {};
 io.on('connection', async (socket) => {
     socket.on('disconnect', function () {
         console.log('user disconnected');
+        for (let [key, value] of Object.entries(users)) {
+            if (value === socket) {
+                delete users[key];
+                break;
+            }
+        }
     });
     socket.on('welcome', async function message(data) {
         const { id } = data;
@@ -177,6 +183,10 @@ io.on('connection', async (socket) => {
             conversation.lastMessageAuthorId = id;
             conversation.lastMessageId = newMessage._id;
             await conversation.save();
+            const otherId = conversation.usersId.filter(userId => userId !== id)[0];
+            if (users[otherId]) {
+                users[otherId].emit('newMessage', { conversationId });
+            }
             socket.emit('sendMessage', { success: true });
         }
         catch (error) {

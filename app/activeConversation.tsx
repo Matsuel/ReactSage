@@ -2,7 +2,7 @@ import { useLocalSearchParams } from 'expo-router'
 import React, { useEffect, useRef, useState } from 'react'
 import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import * as StyleConst from './constantes/stylesConst'
-import { emitAndListenEvent, emitEvent } from './utils/events'
+import { emitAndListenEvent, emitEvent, listenEvent } from './utils/events'
 import { MessageInterfaceComponent } from '../server/type'
 import ModalIndicator from './Components/ModalIndicator'
 import Send from './assets/Send'
@@ -25,6 +25,12 @@ const ActiveConversation = () => {
                 flatListRef.current?.scrollToEnd({ animated: true })
             }
         })
+
+        listenEvent('newMessage', (data) => {
+            if (data.conversationId === conversationId) {
+                emitEvent('getMessages', { id, conversationId })
+            }
+        })
     }, [])
 
     const sendMessage = () => {
@@ -42,7 +48,7 @@ const ActiveConversation = () => {
         setIsKeyboardOpen(true)
         setTimeout(() => {
             flatListRef.current?.scrollToEnd({ animated: true })
-        }, 50)
+        }, 60)
     }
 
 
