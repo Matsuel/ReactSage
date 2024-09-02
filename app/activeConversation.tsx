@@ -1,11 +1,12 @@
 import { useLocalSearchParams } from 'expo-router'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import * as StyleConst from './constantes/stylesConst'
 import { emitAndListenEvent, emitEvent } from './utils/events'
 import { MessageInterfaceComponent } from '../server/type'
 import ModalIndicator from './Components/ModalIndicator'
 import Send from './assets/Send'
+import Message from './Components/Message'
 
 const ActiveConversation = () => {
 
@@ -14,12 +15,14 @@ const ActiveConversation = () => {
     const [messages, setMessages] = useState<MessageInterfaceComponent[]>([])
     const params = useLocalSearchParams()
     const { conversationId, picture, name, id } = params
+    const flatListRef = useRef<FlatList>(null)
 
 
     useEffect(() => {
         emitAndListenEvent('getMessages', { id, conversationId }, (data) => {
             if (data.success) {
                 setMessages(data.messages)
+                flatListRef.current?.scrollToEnd({ animated: true })
             }
         })
     }, [])
@@ -30,8 +33,16 @@ const ActiveConversation = () => {
             if (data.success) {
                 emitEvent('getMessages', { id, conversationId })
                 setMessage('')
+                flatListRef.current?.scrollToEnd({ animated: true })
             }
         })
+    }
+
+    const focusKeyboard = () => {
+        setIsKeyboardOpen(true)
+        setTimeout(() => {
+            flatListRef.current?.scrollToEnd({ animated: true })
+        }, 50)
     }
 
 
@@ -41,10 +52,12 @@ const ActiveConversation = () => {
             <FlatList
                 style={styles.flatList}
                 data={messages}
-                renderItem={({ item }) => (
-                    <Text style={{color: "#fff"}}>{item.content}</Text>
-                )}
+                renderItem={({ item }) => (<Message {...item} myId={id as string} />)}
                 keyExtractor={(item) => item._id}
+                ref={flatListRef}
+                onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+                ListFooterComponent={<View style={{ height: 52 }} />}
+                showsVerticalScrollIndicator={false}
             />
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -58,14 +71,15 @@ const ActiveConversation = () => {
                         style={styles.input}
                         placeholderTextColor={"#fff"}
                         keyboardAppearance='dark'
-                        onFocus={() => setIsKeyboardOpen(true)}
+                        onFocus={focusKeyboard}
                         onBlur={() => setIsKeyboardOpen(false)}
                         multiline={true}
                         value={message}
                         onChangeText={(text) => setMessage(text)}
+                        enablesReturnKeyAutomatically={true}
                     />
-                    <TouchableOpacity onPress={sendMessage}>
-                        <Send color='#fff' width={40} />
+                    <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+                        <Send color='#fff' width={30} />
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
@@ -96,7 +110,6 @@ const styles = StyleSheet.create({
         width: '100%',
         height: "auto",
         justifyContent: 'flex-end',
-        marginBottom: 20,
     },
     inputContainer: {
         width: '100%',
@@ -104,7 +117,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 15,
+        padding: 30,
         gap: 10,
     },
     input: {
@@ -116,5 +129,14 @@ const styles = StyleSheet.create({
         borderRadius: StyleConst.BorderRadius,
         textAlignVertical: "center",
         paddingVertical: Platform.OS === "ios" ? 15 : 0,
+    },
+    sendButton: {
+        width: 50,
+        height: 50,
+        backgroundColor: "#2e2f31",
+        borderRadius: StyleConst.BorderRadius,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 })
