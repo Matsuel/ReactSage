@@ -20,7 +20,20 @@ replaceFileContent(envFilePath, "EXPO_PUBLIC_SERVER_IP=", IPTOUSE)
 
 const io = createWebSocketServer({ address: IPTOUSE, port: 8080 })
 
+let users = {}
+
 io.on('connection', async (socket) => {
+
+    socket.on('disconnect', function () {
+        console.log('user disconnected');
+    });
+
+    socket.on('welcome', async function message(data) {
+        const { id } = data
+        users[id] = socket
+        socket.emit('welcome', { success: true })
+    });
+        
 
     socket.on('checkPin', async function message(data) {
         console.log(data);

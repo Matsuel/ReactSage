@@ -5,26 +5,48 @@ import { useRouter } from 'expo-router'
 import { getSecureData } from './utils/getData'
 import { deleteSecureData } from './utils/deleteData'
 import Button from './Components/Button'
-import Home from './homepage'
 import * as StyleConst from './constantes/stylesConst'
+import { useStorageData } from './hooks/useStorageData'
+import { emitAndListenEvent } from './utils/events'
 
 const Index = () => {
 
   const router = useRouter()
+  const { data: id, loading } = useStorageData('id')
 
   useEffect(() => {
     const fetchDatas = async () => {
+      if (loading) return
       const login = await getSecureData('login')
       setTimeout(() => {
         if (login === "true") {
-          router.push('homepage')
+          emitAndListenEvent('welcome', { id }, (data) => {
+            if (data.success) {
+              router.push('homepage')
+            }
+          })
         } else {
           router.push('welcome')
         }
       }, 5)
     }
     fetchDatas()
-  }, [])
+  }, [loading])
+  
+
+  // useEffect(() => {
+  //   const fetchDatas = async () => {
+  //     const login = await getSecureData('login')
+  //     setTimeout(() => {
+  //       if (login === "true") {
+  //         router.push('homepage')
+  //       } else {
+  //         router.push('welcome')
+  //       }
+  //     }, 5)
+  //   }
+  //   fetchDatas()
+  // }, [])
 
   return (
     <View style={styles.container}>
