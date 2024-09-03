@@ -15,6 +15,5 @@ export const styles = StyleSheet.create({
     },
     username: {
         color: StyleConst.TextColor,
-        fontSize: 20,
     },
 });

@@ -6,10 +6,12 @@ interface AvatarProps {
     width?: number
     picture: string
     username: string
+    fontSize?: number
 }
 
 const Avatar = ({
     width = 35,
+    fontSize = 20,
     picture,
     username
 }: AvatarProps) => {
@@ -18,8 +20,10 @@ const Avatar = ({
             {picture ? <Image
                 source={{ uri: `data:image/jpeg;base64,${picture}` }}
                 style={styles.avatar}
-            />:
-            <Text style={styles.username}>{username.charAt(0)}</Text>}
+            /> :
+                <Text style={[styles.username, { fontSize: fontSize }]}>
+                    {username.charAt(0)}
+                </Text>}
         </View>
     )
 }

@@ -8,6 +8,7 @@ import ModalIndicator from './Components/ModalIndicator'
 import Send from './assets/Send'
 import Message from './Components/Message'
 import * as Haptics from 'expo-haptics'
+import Typing from './Components/Typing'
 
 const ActiveConversation = () => {
 
@@ -65,7 +66,7 @@ const ActiveConversation = () => {
                 keyExtractor={(item) => item._id}
                 ref={flatListRef}
                 onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-                ListFooterComponent={<View style={{ height: 52 }} />}
+                ListFooterComponent={<Typing picture={picture as string} username={name as string} />}
                 showsVerticalScrollIndicator={false}
             />
             <KeyboardAvoidingView
