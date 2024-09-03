@@ -7,6 +7,7 @@ import { MessageInterfaceComponent } from '../server/type'
 import ModalIndicator from './Components/ModalIndicator'
 import Send from './assets/Send'
 import Message from './Components/Message'
+import * as Haptics from 'expo-haptics'
 
 const ActiveConversation = () => {
 
@@ -27,6 +28,7 @@ const ActiveConversation = () => {
         })
 
         listenEvent('newMessage', (data) => {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
             if (data.conversationId === conversationId) {
                 emitEvent('getMessages', { id, conversationId })
             }
@@ -34,6 +36,7 @@ const ActiveConversation = () => {
     }, [])
 
     const sendMessage = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         if (message.trim() === '') return
         emitAndListenEvent('sendMessage', { id, conversationId, message }, (data) => {
             if (data.success) {
