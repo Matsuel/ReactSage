@@ -22,14 +22,11 @@ const Typing = ({
 
     useAnimateBubble(translateY1, translateY2, translateY3);
 
-
-
     return (
         <View style={styles.container}>
             {username !== undefined && username.map((name) => (
                 <Avatar picture={picture} username={name} key={name} width={25} fontSize={15} />
             ))}
-            {/* <Avatar picture={picture} username={username} width={25} fontSize={15} /> */}
             <View style={styles.bubblesContainer}>
                 <Animated.View style={[styles.bubble, { transform: [{ translateY: translateY1 }] }]} />
                 <Animated.View style={[styles.bubble, { transform: [{ translateY: translateY2 }] }]} />
