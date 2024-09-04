@@ -194,6 +194,18 @@ io.on('connection', async (socket) => {
             socket.emit('sendMessage', { success: false });
         }
     });
+    socket.on('typing', async function message(data) {
+        const { id, conversationId, name } = data;
+        if (!await conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } }))
+            return socket.emit('typing', { success: false, message: 'Conversation not found' });
+        const otherId = (await conversation_1.ConversationModel.findById(conversationId)).usersId.filter(userId => userId !== id)[0];
+        if (Object.keys(users).includes(otherId)) {
+            users[otherId].emit('typing', { name });
+        }
+        else {
+            console.log('User not connected');
+        }
+    });
 });
 (0, connecToDb_1.connectToDb)();
 //# sourceMappingURL=main.js.map

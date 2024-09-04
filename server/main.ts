@@ -39,7 +39,7 @@ io.on('connection', async (socket) => {
         users[id] = socket
         socket.emit('welcome', { success: true })
     });
-        
+
 
     socket.on('checkPin', async function message(data) {
         console.log(data);
@@ -198,6 +198,18 @@ io.on('connection', async (socket) => {
             socket.emit('sendMessage', { success: false })
         }
     });
+
+    socket.on('typing', async function message(data) {
+        const { id, conversationId, name } = data
+        if (!await ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })) return socket.emit('typing', { success: false, message: 'Conversation not found' })
+        const otherId = (await ConversationModel.findById(conversationId)).usersId.filter(userId => userId !== id)[0]
+        if (Object.keys(users).includes(otherId)) {
+            users[otherId].emit('typing', { name })
+        } else {
+            console.log('User not connected');
+        }
+    });
+
 
 
 });

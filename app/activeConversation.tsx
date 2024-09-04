@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from 'expo-router'
 import React, { useEffect, useRef, useState } from 'react'
-import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 import * as StyleConst from './constantes/stylesConst'
 import { emitAndListenEvent, emitEvent, listenEvent } from './utils/events'
 import { MessageInterfaceComponent } from '../server/type'
@@ -9,6 +9,7 @@ import Send from './assets/Send'
 import Message from './Components/Message'
 import * as Haptics from 'expo-haptics'
 import Typing from './Components/Typing'
+import MessageView from './Components/MessageView'
 
 const ActiveConversation = () => {
 
@@ -18,6 +19,9 @@ const ActiveConversation = () => {
     const params = useLocalSearchParams()
     const { conversationId, picture, name, id } = params
     const flatListRef = useRef<FlatList>(null)
+    const [usernameTyping, setUsernameTyping] = useState<string[]>([])
+
+    const typingTimeout = useRef<NodeJS.Timeout>()
 
 
     useEffect(() => {
@@ -35,6 +39,20 @@ const ActiveConversation = () => {
             }
         })
     }, [])
+
+    useEffect(() => {
+        listenEvent('typing', (data) => {
+            const { name: typingUser } = data
+            if (usernameTyping.includes(typingUser)) return
+            setUsernameTyping([...usernameTyping, typingUser])
+
+            if (typingTimeout.current) clearTimeout(typingTimeout.current)
+
+            typingTimeout.current = setTimeout(() => {
+                setUsernameTyping([])
+            }, 5000)
+        })
+    }, [usernameTyping])
 
     const sendMessage = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -55,6 +73,11 @@ const ActiveConversation = () => {
         }, 60)
     }
 
+    const typing = (e = { nativeEvent: { key: '' } }) => {
+        if (e.nativeEvent.key === 'Backspace') return
+        emitEvent('typing', { id, conversationId, name })
+    }
+
 
     return (
         <View style={styles.container}>
@@ -66,7 +89,11 @@ const ActiveConversation = () => {
                 keyExtractor={(item) => item._id}
                 ref={flatListRef}
                 onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-                ListFooterComponent={<Typing picture={picture as string} username={name as string} />}
+                ListFooterComponent={
+                    <View style={{ width: '100%', height: "auto" }} >
+                        <Typing picture={picture as string} username={usernameTyping} />
+                    </View>
+                }
                 showsVerticalScrollIndicator={false}
             />
             <KeyboardAvoidingView
@@ -86,6 +113,7 @@ const ActiveConversation = () => {
                         multiline={true}
                         value={message}
                         onChangeText={(text) => setMessage(text)}
+                        onKeyPress={typing}
                         enablesReturnKeyAutomatically={true}
                     />
                     <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
@@ -93,7 +121,7 @@ const ActiveConversation = () => {
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
-        </View>
+        </View >
     )
 }
 
