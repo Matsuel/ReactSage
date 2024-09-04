@@ -220,6 +220,16 @@ io.on('connection', async (socket) => {
         }
     });
 
+    socket.on('updateViewed', async function message(data) {
+        const { id, conversationId } = data
+        console.log(data);
+        if (!await ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })) return socket.emit('updateViewed', { success: false, message: 'Conversation not found' })
+        const lastMessageId = (await ConversationModel.findById(conversationId)).lastMessageId
+        let conversationCollection = mongoose.model('Conversation' + conversationId, Message)
+        await conversationCollection.updateMany({ _id: { $eq: lastMessageId } }, { $push: { viewedBy: id } })
+        
+    });
+
 
 
 });

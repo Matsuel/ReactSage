@@ -38,6 +38,8 @@ const ActiveConversation = () => {
                 emitEvent('getMessages', { id, conversationId })
             }
         })
+
+        emitEvent('updateViewed', { id, conversationId })
     }, [])
 
     useEffect(() => {
