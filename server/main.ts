@@ -14,11 +14,21 @@ const IPTOUSE = getLocalIpV4()
 
 console.log("\x1b[34mServer will run on IP:", IPTOUSE, "\x1b[0m")
 
-const envFilePath = getFileInApp(".env.local")
 
-replaceFileContent(envFilePath, "EXPO_PUBLIC_SERVER_IP=", IPTOUSE)
+const hasFlags = (...flags) =>
+    flags.every(flag =>
+        process.argv.includes(/^-{1,2}/.test(flag) ? flag : '--' + flag)
+    );
+
+if (hasFlags('-r') || hasFlags('replace')) {
+    console.log('Replace mode');
+    const envFilePath = getFileInApp(".env.local")
+
+    replaceFileContent(envFilePath, "EXPO_PUBLIC_SERVER_IP=", IPTOUSE)
+}
 
 const io = createWebSocketServer({ address: IPTOUSE, port: 8080 })
+
 
 let users = {}
 

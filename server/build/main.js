@@ -16,8 +16,12 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const message_1 = require("./scheme/message");
 const IPTOUSE = (0, getLocalIp_1.getLocalIpV4)();
 console.log("\x1b[34mServer will run on IP:", IPTOUSE, "\x1b[0m");
-const envFilePath = (0, getFileInApp_1.getFileInApp)(".env.local");
-(0, replaceFilleContent_1.replaceFileContent)(envFilePath, "EXPO_PUBLIC_SERVER_IP=", IPTOUSE);
+const hasFlags = (...flags) => flags.every(flag => process.argv.includes(/^-{1,2}/.test(flag) ? flag : '--' + flag));
+if (hasFlags('-r') || hasFlags('replace')) {
+    console.log('Replace mode');
+    const envFilePath = (0, getFileInApp_1.getFileInApp)(".env.local");
+    (0, replaceFilleContent_1.replaceFileContent)(envFilePath, "EXPO_PUBLIC_SERVER_IP=", IPTOUSE);
+}
 const io = (0, initWS_1.createWebSocketServer)({ address: IPTOUSE, port: 8080 });
 let users = {};
 io.on('connection', async (socket) => {
