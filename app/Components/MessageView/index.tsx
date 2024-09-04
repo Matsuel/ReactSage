@@ -7,13 +7,17 @@ interface MessageViewProps {
     usersId: string[]
     name: string
     picture: string
+    myId: string
 }
 
 const MessageView = ({
     usersId,
     name,
-    picture
+    picture,
+    myId
 }: MessageViewProps) => {
+
+    usersId = usersId.filter((id) => id !== myId)
 
     return (
         <View style={styles.container}>

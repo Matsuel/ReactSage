@@ -226,8 +226,9 @@ io.on('connection', async (socket) => {
         if (!await ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })) return socket.emit('updateViewed', { success: false, message: 'Conversation not found' })
         const lastMessageId = (await ConversationModel.findById(conversationId)).lastMessageId
         let conversationCollection = mongoose.model('Conversation' + conversationId, Message)
+        // supprimer de tous les messages du chat l'utilisateur courant de viewedBy
+        await conversationCollection.updateMany({ viewedBy: { $in: [id] } }, { $pull: { viewedBy: id } })
         await conversationCollection.updateMany({ _id: { $eq: lastMessageId } }, { $push: { viewedBy: id } })
-        
     });
 
 

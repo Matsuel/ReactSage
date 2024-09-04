@@ -25,6 +25,8 @@ const ActiveConversation = () => {
 
 
     useEffect(() => {
+        emitEvent('updateViewed', { id, conversationId })
+
         emitAndListenEvent('getMessages', { id, conversationId }, (data) => {
             if (data.success) {
                 setMessages(data.messages)
@@ -39,7 +41,6 @@ const ActiveConversation = () => {
             }
         })
 
-        emitEvent('updateViewed', { id, conversationId })
     }, [])
 
     useEffect(() => {
@@ -91,7 +92,7 @@ const ActiveConversation = () => {
             <FlatList
                 style={styles.flatList}
                 data={messages}
-                renderItem={({ item }) => (<Message {...item} myId={id as string} />)}
+                renderItem={({ item }) => (<Message {...item} myId={id as string} authorName={name as string} />)}
                 keyExtractor={(item) => item._id}
                 ref={flatListRef}
                 onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
