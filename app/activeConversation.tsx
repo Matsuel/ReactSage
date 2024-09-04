@@ -46,6 +46,10 @@ const ActiveConversation = () => {
             if (usernameTyping.includes(typingUser)) return
             setUsernameTyping([...usernameTyping, typingUser])
 
+            setTimeout(() => {
+                flatListRef.current?.scrollToEnd({ animated: true })
+            }, 60)
+            
             if (typingTimeout.current) clearTimeout(typingTimeout.current)
 
             typingTimeout.current = setTimeout(() => {
