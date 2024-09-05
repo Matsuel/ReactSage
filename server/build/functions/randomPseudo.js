@@ -12,4 +12,3 @@ const generateRandomPseudo = () => {
     return randomAdjective + randomNoun;
 };
 exports.generateRandomPseudo = generateRandomPseudo;
-//# sourceMappingURL=randomPseudo.js.map

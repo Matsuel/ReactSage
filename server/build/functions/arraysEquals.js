@@ -11,4 +11,3 @@ const arraysEqual = (a, b) => {
     return true;
 };
 exports.arraysEqual = arraysEqual;
-//# sourceMappingURL=arraysEquals.js.map

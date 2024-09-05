@@ -15,7 +15,7 @@ const IPTOUSE = getLocalIpV4()
 console.log("\x1b[34mServer will run on IP:", IPTOUSE, "\x1b[0m")
 
 
-const hasFlags = (...flags) =>
+const hasFlags = (...flags: string[]) =>
     flags.every(flag =>
         process.argv.includes(/^-{1,2}/.test(flag) ? flag : '--' + flag)
     );
@@ -29,8 +29,13 @@ if (hasFlags('-r') || hasFlags('replace')) {
 
 const io = createWebSocketServer({ address: IPTOUSE, port: 8080 })
 
+if (!io) {
+    console.log('Server not started');
+    process.exit()
+}
 
-let users = {}
+
+let users: { [key: string]: any } = {}
 
 io.on('connection', async (socket) => {
 
@@ -113,7 +118,7 @@ io.on('connection', async (socket) => {
             // parmis les utilisateurs trouvés il faut supprimer les utilisateurs qui sont déjà dans les conversations de l'utilisateur courant
             const conversations = await ConversationModel.find({ usersId: { $in: [id] } }).select('usersId')
             const usersId = conversations.map(conversation => conversation.usersId).flat()
-            users = users.filter(user => user._id.toString() !== id && !usersId.includes(user._id.toString()))
+            users = users.filter(user => (user._id as string).toString() !== id && !usersId.includes((user._id as string).toString()))
             socket.emit('searchUsers', { success: true, users })
         } catch (error) {
             socket.emit('searchUsers', { success: false })
@@ -193,14 +198,16 @@ io.on('connection', async (socket) => {
             })
             await newMessage.save()
             const conversation = await ConversationModel.findById(conversationId)
-            conversation.lastMessage = message
-            conversation.lastMessageDate = new Date()
-            conversation.lastMessageAuthorId = id
-            conversation.lastMessageId = newMessage._id as string
-            await conversation.save()
-            const otherId = conversation.usersId.filter(userId => userId !== id)[0]
-            if (users[otherId]) {
-                users[otherId].emit('newMessage', { conversationId })
+            if (conversation) {
+                conversation.lastMessage = message;
+                conversation.lastMessageDate = new Date()
+                conversation.lastMessageAuthorId = id
+                conversation.lastMessageId = newMessage._id as string
+                await conversation.save()
+                const otherId = conversation.usersId.filter(userId => userId !== id)[0]
+                if (users[otherId]) {
+                    users[otherId].emit('newMessage', { conversationId })
+                }
             }
             socket.emit('sendMessage', { success: true })
         } catch (error) {
@@ -212,7 +219,9 @@ io.on('connection', async (socket) => {
     socket.on('typing', async function message(data) {
         const { id, conversationId, name } = data
         if (!await ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })) return socket.emit('typing', { success: false, message: 'Conversation not found' })
-        const otherId = (await ConversationModel.findById(conversationId)).usersId.filter(userId => userId !== id)[0]
+        const conversation = await ConversationModel.findById(conversationId)
+        if (!conversation) return socket.emit('typing', { success: false, message: 'Conversation not found' })
+        const otherId = conversation.usersId.filter(userId => userId !== id)[0]
         if (Object.keys(users).includes(otherId)) {
             users[otherId].emit('typing', { name })
         } else {
@@ -224,7 +233,9 @@ io.on('connection', async (socket) => {
         const { id, conversationId } = data
         console.log(data);
         if (!await ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })) return socket.emit('updateViewed', { success: false, message: 'Conversation not found' })
-        const lastMessageId = (await ConversationModel.findById(conversationId)).lastMessageId
+        const conversation = await ConversationModel.findById(conversationId)
+        if (!conversation) return socket.emit('updateViewed', { success: false, message: 'Conversation not found' })
+        const lastMessageId = conversation.lastMessageId
         let conversationCollection = mongoose.model('Conversation' + conversationId, Message)
         // supprimer de tous les messages du chat l'utilisateur courant de viewedBy
         await conversationCollection.updateMany({ viewedBy: { $in: [id] } }, { $pull: { viewedBy: id } })

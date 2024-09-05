@@ -11,4 +11,3 @@ exports.Message = new mongoose_1.default.Schema({
     date: { type: Date, default: Date.now, required: true },
     viewedBy: { type: [String], required: false }
 });
-//# sourceMappingURL=message.js.map

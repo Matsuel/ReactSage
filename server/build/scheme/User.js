@@ -17,4 +17,3 @@ exports.User = new mongoose_1.default.Schema({
     color: { type: String, default: '#000' },
 }, { collection: 'users' });
 exports.UserModel = mongoose_1.default.model('User', exports.User);
-//# sourceMappingURL=User.js.map

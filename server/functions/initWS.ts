@@ -9,7 +9,7 @@ export const createWebSocketServer = ({
 }: {
     address: string,
     port: number
-}): Server => {
+}): Server | undefined => {
     try {
         const app = express();
         app.use(cors())
@@ -29,4 +29,5 @@ export const createWebSocketServer = ({
     } catch (error) {
         console.log(error);
     }
+    return undefined;
 }

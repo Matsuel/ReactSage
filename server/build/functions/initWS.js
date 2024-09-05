@@ -29,6 +29,6 @@ const createWebSocketServer = ({ address, port }) => {
     catch (error) {
         console.log(error);
     }
+    return undefined;
 };
 exports.createWebSocketServer = createWebSocketServer;
-//# sourceMappingURL=initWS.js.map

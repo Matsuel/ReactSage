@@ -7,4 +7,3 @@ const getFileInApp = (pathFromApp) => {
     return filePath;
 };
 exports.getFileInApp = getFileInApp;
-//# sourceMappingURL=getFileInApp.js.map

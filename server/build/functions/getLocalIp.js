@@ -8,4 +8,3 @@ const getLocalIpV4 = () => {
     return ipV4 || "127.0.0.1";
 };
 exports.getLocalIpV4 = getLocalIpV4;
-//# sourceMappingURL=getLocalIp.js.map

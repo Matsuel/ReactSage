@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -23,8 +32,12 @@ if (hasFlags('-r') || hasFlags('replace')) {
     (0, replaceFilleContent_1.replaceFileContent)(envFilePath, "EXPO_PUBLIC_SERVER_IP=", IPTOUSE);
 }
 const io = (0, initWS_1.createWebSocketServer)({ address: IPTOUSE, port: 8080 });
+if (!io) {
+    console.log('Server not started');
+    process.exit();
+}
 let users = {};
-io.on('connection', async (socket) => {
+io.on('connection', (socket) => __awaiter(void 0, void 0, void 0, function* () {
     socket.on('disconnect', function () {
         console.log('user disconnected');
         for (let [key, value] of Object.entries(users)) {
@@ -34,193 +47,222 @@ io.on('connection', async (socket) => {
             }
         }
     });
-    socket.on('welcome', async function message(data) {
-        const { id } = data;
-        users[id] = socket;
-        socket.emit('welcome', { success: true });
+    socket.on('welcome', function message(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = data;
+            users[id] = socket;
+            socket.emit('welcome', { success: true });
+        });
     });
-    socket.on('checkPin', async function message(data) {
-        console.log(data);
-        const { phone, pin } = data;
-        try {
-            const user = await User_1.UserModel.findOne({ phone });
-            if (user) {
-                const match = bcrypt_1.default.compareSync(pin, user.pin);
-                if (match) {
-                    socket.emit('checkPin', { success: true, id: user._id, username: user.username });
+    socket.on('checkPin', function message(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(data);
+            const { phone, pin } = data;
+            try {
+                const user = yield User_1.UserModel.findOne({ phone });
+                if (user) {
+                    const match = bcrypt_1.default.compareSync(pin, user.pin);
+                    if (match) {
+                        socket.emit('checkPin', { success: true, id: user._id, username: user.username });
+                    }
+                    else {
+                        socket.emit('checkPin', { success: false, message: 'Pin not match' });
+                    }
                 }
                 else {
-                    socket.emit('checkPin', { success: false, message: 'Pin not match' });
+                    socket.emit('checkPin', { success: false, message: 'User not found' });
                 }
             }
-            else {
-                socket.emit('checkPin', { success: false, message: 'User not found' });
+            catch (error) {
+                socket.emit('checkPin', { success: false, message: 'Login failed' });
             }
-        }
-        catch (error) {
-            socket.emit('checkPin', { success: false, message: 'Login failed' });
-        }
+        });
     });
-    socket.on('login', async function message(data) {
-        const { phone } = data;
-        try {
-            const user = await User_1.UserModel.findOne({ phone });
-            if (user) {
-                socket.emit('login', { success: true, id: user._id, username: user.username, phone: user.phone, pin: user.pin });
-            }
-            else {
-                socket.emit('login', { success: false, message: 'User not found' });
-            }
-        }
-        catch (error) {
-            socket.emit('login', { success: false, message: 'Login failed' });
-        }
-    });
-    socket.on('register', async function message(data) {
-        console.log('received: %s', data);
-        try {
-            const user = new User_1.UserModel({
-                phone: data.phone,
-                username: (0, randomPseudo_1.generateRandomPseudo)(),
-                pin: bcrypt_1.default.hashSync(data.pin, 10),
-            });
-            await user.save();
-            socket.emit('register', { success: true, id: user._id, username: user.username });
-        }
-        catch (error) {
-            socket.emit('register', { success: false });
-        }
-    });
-    socket.on('searchUsers', async function message(data) {
-        console.log('received: %s', data);
-        const { id, search } = data;
-        try {
-            let users = await User_1.UserModel.find({ username: { $regex: search, $options: 'i' } }).select('username phone _id picture');
-            // supprimer l'utilisateur courant de la liste
-            // parmis les utilisateurs trouvés il faut supprimer les utilisateurs qui sont déjà dans les conversations de l'utilisateur courant
-            const conversations = await conversation_1.ConversationModel.find({ usersId: { $in: [id] } }).select('usersId');
-            const usersId = conversations.map(conversation => conversation.usersId).flat();
-            users = users.filter(user => user._id.toString() !== id && !usersId.includes(user._id.toString()));
-            socket.emit('searchUsers', { success: true, users });
-        }
-        catch (error) {
-            socket.emit('searchUsers', { success: false });
-        }
-    });
-    socket.on('getConversations', async function message(data) {
-        console.log('received: %s', data);
-        const { id } = data;
-        try {
-            let conversations = await conversation_1.ConversationModel.find({ usersId: { $in: [id] } }).select('name usersId pinnedBy lastMessage lastMessageDate lastMessageAuthorId lastMessageId isGroup createdAt');
-            // recuperer pour chaucne des conversations l'autre utilisateur, récup sa photo et son pseudo
-            for (let i = 0; i < conversations.length; i++) {
-                const conversation = conversations[i];
-                const userId = conversation.usersId.filter(userId => userId !== id)[0];
-                const user = await User_1.UserModel.findById(userId).select('username picture');
-                if (!user) {
-                    continue;
+    socket.on('login', function message(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { phone } = data;
+            try {
+                const user = yield User_1.UserModel.findOne({ phone });
+                if (user) {
+                    socket.emit('login', { success: true, id: user._id, username: user.username, phone: user.phone, pin: user.pin });
                 }
-                conversations[i] = Object.assign(Object.assign({}, conversation.toObject()), { name: user.username, picture: user.picture, _id: conversation._id });
+                else {
+                    socket.emit('login', { success: false, message: 'User not found' });
+                }
             }
-            socket.emit('getConversations', { success: true, conversations });
-        }
-        catch (error) {
-            console.log(error);
-            socket.emit('getConversations', { success: false });
-        }
+            catch (error) {
+                socket.emit('login', { success: false, message: 'Login failed' });
+            }
+        });
     });
-    socket.on('createConversation', async function message(data) {
-        const { id, otherId } = data;
-        console.log(id, otherId);
-        try {
-            if (await conversation_1.ConversationModel.findOne({ usersId: [id, otherId] }))
-                return socket.emit('createConversation', { success: false, message: 'Conversation already exist' });
-            if (await conversation_1.ConversationModel.findOne({ usersId: [otherId, id] }))
-                return socket.emit('createConversation', { success: false, message: 'Conversation already exist' });
-            const conversation = new conversation_1.ConversationModel({
-                usersId: [id, otherId],
-                isGroup: false,
-                createdAt: new Date(),
-                pinnedBy: [],
-            });
-            await conversation.save();
-            let conversationCollection = mongoose_1.default.model('Conversation' + conversation._id, message_1.Message);
-            conversationCollection.createCollection();
-            socket.emit('createConversation', { success: true });
-        }
-        catch (error) {
-            console.log(error);
-            socket.emit('createConversation', { success: false });
-        }
+    socket.on('register', function message(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('received: %s', data);
+            try {
+                const user = new User_1.UserModel({
+                    phone: data.phone,
+                    username: (0, randomPseudo_1.generateRandomPseudo)(),
+                    pin: bcrypt_1.default.hashSync(data.pin, 10),
+                });
+                yield user.save();
+                socket.emit('register', { success: true, id: user._id, username: user.username });
+            }
+            catch (error) {
+                socket.emit('register', { success: false });
+            }
+        });
     });
-    socket.on('getMessages', async function message(data) {
-        const { id, conversationId } = data;
-        try {
-            if (!await conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } }))
-                return socket.emit('getMessages', { success: false, message: 'Conversation not found' });
-            let conversationCollection = mongoose_1.default.model('Conversation' + conversationId, message_1.Message);
-            let messages = await conversationCollection.find().sort({ createdAt: 1 });
-            socket.emit('getMessages', { success: true, messages });
-        }
-        catch (error) {
-            console.log(error);
-            socket.emit('getMessages', { success: false });
-        }
+    socket.on('searchUsers', function message(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('received: %s', data);
+            const { id, search } = data;
+            try {
+                let users = yield User_1.UserModel.find({ username: { $regex: search, $options: 'i' } }).select('username phone _id picture');
+                // supprimer l'utilisateur courant de la liste
+                // parmis les utilisateurs trouvés il faut supprimer les utilisateurs qui sont déjà dans les conversations de l'utilisateur courant
+                const conversations = yield conversation_1.ConversationModel.find({ usersId: { $in: [id] } }).select('usersId');
+                const usersId = conversations.map(conversation => conversation.usersId).flat();
+                users = users.filter(user => user._id.toString() !== id && !usersId.includes(user._id.toString()));
+                socket.emit('searchUsers', { success: true, users });
+            }
+            catch (error) {
+                socket.emit('searchUsers', { success: false });
+            }
+        });
     });
-    socket.on('sendMessage', async function message(data) {
-        console.log(data);
-        const { id, conversationId, message } = data;
-        try {
-            if (!await conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } }))
-                return socket.emit('sendMessage', { success: false, message: 'Conversation not found' });
-            let conversationCollection = mongoose_1.default.model('Conversation' + conversationId, message_1.Message);
-            const newMessage = new conversationCollection({
-                authorId: id,
-                content: message,
-                date: new Date(),
-                viewedBy: [],
-            });
-            await newMessage.save();
-            const conversation = await conversation_1.ConversationModel.findById(conversationId);
-            conversation.lastMessage = message;
-            conversation.lastMessageDate = new Date();
-            conversation.lastMessageAuthorId = id;
-            conversation.lastMessageId = newMessage._id;
-            await conversation.save();
+    socket.on('getConversations', function message(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('received: %s', data);
+            const { id } = data;
+            try {
+                let conversations = yield conversation_1.ConversationModel.find({ usersId: { $in: [id] } }).select('name usersId pinnedBy lastMessage lastMessageDate lastMessageAuthorId lastMessageId isGroup createdAt');
+                // recuperer pour chaucne des conversations l'autre utilisateur, récup sa photo et son pseudo
+                for (let i = 0; i < conversations.length; i++) {
+                    const conversation = conversations[i];
+                    const userId = conversation.usersId.filter(userId => userId !== id)[0];
+                    const user = yield User_1.UserModel.findById(userId).select('username picture');
+                    if (!user) {
+                        continue;
+                    }
+                    conversations[i] = Object.assign(Object.assign({}, conversation.toObject()), { name: user.username, picture: user.picture, _id: conversation._id });
+                }
+                socket.emit('getConversations', { success: true, conversations });
+            }
+            catch (error) {
+                console.log(error);
+                socket.emit('getConversations', { success: false });
+            }
+        });
+    });
+    socket.on('createConversation', function message(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id, otherId } = data;
+            console.log(id, otherId);
+            try {
+                if (yield conversation_1.ConversationModel.findOne({ usersId: [id, otherId] }))
+                    return socket.emit('createConversation', { success: false, message: 'Conversation already exist' });
+                if (yield conversation_1.ConversationModel.findOne({ usersId: [otherId, id] }))
+                    return socket.emit('createConversation', { success: false, message: 'Conversation already exist' });
+                const conversation = new conversation_1.ConversationModel({
+                    usersId: [id, otherId],
+                    isGroup: false,
+                    createdAt: new Date(),
+                    pinnedBy: [],
+                });
+                yield conversation.save();
+                let conversationCollection = mongoose_1.default.model('Conversation' + conversation._id, message_1.Message);
+                conversationCollection.createCollection();
+                socket.emit('createConversation', { success: true });
+            }
+            catch (error) {
+                console.log(error);
+                socket.emit('createConversation', { success: false });
+            }
+        });
+    });
+    socket.on('getMessages', function message(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id, conversationId } = data;
+            try {
+                if (!(yield conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })))
+                    return socket.emit('getMessages', { success: false, message: 'Conversation not found' });
+                let conversationCollection = mongoose_1.default.model('Conversation' + conversationId, message_1.Message);
+                let messages = yield conversationCollection.find().sort({ createdAt: 1 });
+                socket.emit('getMessages', { success: true, messages });
+            }
+            catch (error) {
+                console.log(error);
+                socket.emit('getMessages', { success: false });
+            }
+        });
+    });
+    socket.on('sendMessage', function message(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log(data);
+            const { id, conversationId, message } = data;
+            try {
+                if (!(yield conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })))
+                    return socket.emit('sendMessage', { success: false, message: 'Conversation not found' });
+                let conversationCollection = mongoose_1.default.model('Conversation' + conversationId, message_1.Message);
+                const newMessage = new conversationCollection({
+                    authorId: id,
+                    content: message,
+                    date: new Date(),
+                    viewedBy: [],
+                });
+                yield newMessage.save();
+                const conversation = yield conversation_1.ConversationModel.findById(conversationId);
+                if (conversation) {
+                    conversation.lastMessage = message;
+                    conversation.lastMessageDate = new Date();
+                    conversation.lastMessageAuthorId = id;
+                    conversation.lastMessageId = newMessage._id;
+                    yield conversation.save();
+                    const otherId = conversation.usersId.filter(userId => userId !== id)[0];
+                    if (users[otherId]) {
+                        users[otherId].emit('newMessage', { conversationId });
+                    }
+                }
+                socket.emit('sendMessage', { success: true });
+            }
+            catch (error) {
+                console.log(error);
+                socket.emit('sendMessage', { success: false });
+            }
+        });
+    });
+    socket.on('typing', function message(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id, conversationId, name } = data;
+            if (!(yield conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })))
+                return socket.emit('typing', { success: false, message: 'Conversation not found' });
+            const conversation = yield conversation_1.ConversationModel.findById(conversationId);
+            if (!conversation)
+                return socket.emit('typing', { success: false, message: 'Conversation not found' });
             const otherId = conversation.usersId.filter(userId => userId !== id)[0];
-            if (users[otherId]) {
-                users[otherId].emit('newMessage', { conversationId });
+            if (Object.keys(users).includes(otherId)) {
+                users[otherId].emit('typing', { name });
             }
-            socket.emit('sendMessage', { success: true });
-        }
-        catch (error) {
-            console.log(error);
-            socket.emit('sendMessage', { success: false });
-        }
+            else {
+                console.log('User not connected');
+            }
+        });
     });
-    socket.on('typing', async function message(data) {
-        const { id, conversationId, name } = data;
-        if (!await conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } }))
-            return socket.emit('typing', { success: false, message: 'Conversation not found' });
-        const otherId = (await conversation_1.ConversationModel.findById(conversationId)).usersId.filter(userId => userId !== id)[0];
-        if (Object.keys(users).includes(otherId)) {
-            users[otherId].emit('typing', { name });
-        }
-        else {
-            console.log('User not connected');
-        }
+    socket.on('updateViewed', function message(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id, conversationId } = data;
+            console.log(data);
+            if (!(yield conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })))
+                return socket.emit('updateViewed', { success: false, message: 'Conversation not found' });
+            const conversation = yield conversation_1.ConversationModel.findById(conversationId);
+            if (!conversation)
+                return socket.emit('updateViewed', { success: false, message: 'Conversation not found' });
+            const lastMessageId = conversation.lastMessageId;
+            let conversationCollection = mongoose_1.default.model('Conversation' + conversationId, message_1.Message);
+            // supprimer de tous les messages du chat l'utilisateur courant de viewedBy
+            yield conversationCollection.updateMany({ viewedBy: { $in: [id] } }, { $pull: { viewedBy: id } });
+            yield conversationCollection.updateMany({ _id: { $eq: lastMessageId } }, { $push: { viewedBy: id } });
+        });
     });
-    socket.on('updateViewed', async function message(data) {
-        const { id, conversationId } = data;
-        console.log(data);
-        if (!await conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } }))
-            return socket.emit('updateViewed', { success: false, message: 'Conversation not found' });
-        const lastMessageId = (await conversation_1.ConversationModel.findById(conversationId)).lastMessageId;
-        let conversationCollection = mongoose_1.default.model('Conversation' + conversationId, message_1.Message);
-        // supprimer de tous les messages du chat l'utilisateur courant de viewedBy
-        await conversationCollection.updateMany({ viewedBy: { $in: [id] } }, { $pull: { viewedBy: id } });
-        await conversationCollection.updateMany({ _id: { $eq: lastMessageId } }, { $push: { viewedBy: id } });
-    });
-});
+}));
 (0, connecToDb_1.connectToDb)();
-//# sourceMappingURL=main.js.map

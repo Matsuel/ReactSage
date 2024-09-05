@@ -18,4 +18,3 @@ exports.Conversation = new mongoose_1.default.Schema({
     picture: { type: String, required: false, default: '' },
 }, { collection: 'conversations' });
 exports.ConversationModel = mongoose_1.default.model('Conversation', exports.Conversation);
-//# sourceMappingURL=conversation.js.map

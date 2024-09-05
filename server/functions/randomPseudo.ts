@@ -1,4 +1,4 @@
-const getRandomElement = (array) => {
+const getRandomElement = (array: string | any[]) => {
     return array[Math.floor(Math.random() * array.length)];
 }
 
