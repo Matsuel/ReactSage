@@ -220,7 +220,6 @@ io.on('connection', async (socket) => {
         // supprimer de tous les messages du chat l'utilisateur courant de viewedBy
         await conversationCollection.updateMany({ viewedBy: { $in: [id] } }, { $pull: { viewedBy: id } });
         await conversationCollection.updateMany({ _id: { $eq: lastMessageId } }, { $push: { viewedBy: id } });
-        socket.emit('updateViewed', { success: true });
     });
 });
 (0, connecToDb_1.connectToDb)();
