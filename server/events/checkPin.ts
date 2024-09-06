@@ -2,9 +2,6 @@ import { UserModel } from "../scheme/User";
 import bcrypt from 'bcrypt';
 
 const checkPin = async (data: any, socket: any) => {
-    console.log(data);
-    console.log('checkPin');
-    
 
     const { phone, pin } = data
     try {
