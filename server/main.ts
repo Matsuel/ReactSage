@@ -9,6 +9,8 @@ import bcrypt from 'bcrypt'
 import { ConversationModel } from './scheme/conversation'
 import mongoose from 'mongoose'
 import { Message } from './scheme/message'
+import { readdirSync } from 'fs'
+
 
 const IPTOUSE = getLocalIpV4()
 
@@ -37,45 +39,40 @@ if (!io) {
 
 let users: { [key: string]: any } = {}
 
+// const events = require('fs').readdirSync(__dirname + '/events').map((file: string) => file.split('.')[0])
+// events.forEach((event: string) => {
+//     console.log(event);
+
+//     import(`${__dirname}/events/${event}`)
+//         .then(eventFunction => {
+//             const args = eventFunction.default.toString().match(/\(([^)]+)\)/)[1].split(',').map((arg: string) => arg.trim())
+//             console.log('Event:', event, 'Args:', args);
+//             io.on(event, (data: any) => {
+//                 if (args.length === 3) eventFunction.default(data, io, users)
+//                 else eventFunction.default(data, io)
+//             })
+//         })
+//         .catch(console.error)
+// })
+
 io.on('connection', async (socket) => {
 
-    socket.on('disconnect', function () {
-        console.log('user disconnected');
-        for (let [key, value] of Object.entries(users)) {
-            if (value === socket) {
-                delete users[key]
-                break
-            }
-        }
-    });
-
-    socket.on('welcome', async function message(data) {
-        const { id } = data
-        users[id] = socket
-        socket.emit('welcome', { success: true })
-    });
-
-
-    socket.on('checkPin', async function message(data) {
-        console.log(data);
-
-        const { phone, pin } = data
-        try {
-            const user = await UserModel.findOne({ phone })
-            if (user) {
-                const match = bcrypt.compareSync(pin, user.pin);
-                if (match) {
-                    socket.emit('checkPin', { success: true, id: user._id, username: user.username });
-                } else {
-                    socket.emit('checkPin', { success: false, message: 'Pin not match' });
-                }
-            } else {
-                socket.emit('checkPin', { success: false, message: 'User not found' });
-            }
-        } catch (error) {
-            socket.emit('checkPin', { success: false, message: 'Login failed' });
-        }
-    });
+    //recuperer la liste de tous les fichiers dans le dossier events
+    // pour chaque fichier, le nom de l'event est le nom du fichier sans l'extension et recuperer la fonction default
+    // pour chaque event, on ecoute l'event et on execute la fonction default
+    const events = readdirSync(__dirname + '/events').map((file: string) => file.split('.')[0])
+    events.forEach((event: string) => {
+        import(`${__dirname}/events/${event}`)
+            .then(eventFunction => {
+                const args = eventFunction.default.toString().match(/\(([^)]+)\)/)[1].split(',').map((arg: string) => arg.trim())
+                console.log('Event:', event, 'Args:', args);
+                socket.on(event, (data: any) => {
+                    if (args.length === 3) eventFunction.default(data, socket, users)
+                    else eventFunction.default(data, socket)
+                })
+            })
+            .catch(console.error)
+    })
 
     socket.on('login', async function message(data) {
         const { phone } = data
@@ -106,22 +103,6 @@ io.on('connection', async (socket) => {
 
         } catch (error) {
             socket.emit('register', { success: false })
-        }
-    });
-
-    socket.on('searchUsers', async function message(data) {
-        console.log('received: %s', data);
-        const { id, search } = data
-        try {
-            let users = await UserModel.find({ username: { $regex: search, $options: 'i' } }).select('username phone _id picture')
-            // supprimer l'utilisateur courant de la liste
-            // parmis les utilisateurs trouvés il faut supprimer les utilisateurs qui sont déjà dans les conversations de l'utilisateur courant
-            const conversations = await ConversationModel.find({ usersId: { $in: [id] } }).select('usersId')
-            const usersId = conversations.map(conversation => conversation.usersId).flat()
-            users = users.filter(user => (user._id as string).toString() !== id && !usersId.includes((user._id as string).toString()))
-            socket.emit('searchUsers', { success: true, users })
-        } catch (error) {
-            socket.emit('searchUsers', { success: false })
         }
     });
 
@@ -167,52 +148,6 @@ io.on('connection', async (socket) => {
         } catch (error) {
             console.log(error);
             socket.emit('createConversation', { success: false })
-        }
-    });
-
-    socket.on('getMessages', async function message(data) {
-        const { id, conversationId } = data
-
-        try {
-            if (!await ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })) return socket.emit('getMessages', { success: false, message: 'Conversation not found' })
-            let conversationCollection = mongoose.model('Conversation' + conversationId, Message)
-            let messages = await conversationCollection.find().sort({ createdAt: 1 })
-            socket.emit('getMessages', { success: true, messages })
-        } catch (error) {
-            console.log(error);
-            socket.emit('getMessages', { success: false })
-        }
-    });
-
-    socket.on('sendMessage', async function message(data) {
-        console.log(data);
-        const { id, conversationId, message } = data
-        try {
-            if (!await ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })) return socket.emit('sendMessage', { success: false, message: 'Conversation not found' })
-            let conversationCollection = mongoose.model('Conversation' + conversationId, Message)
-            const newMessage = new conversationCollection({
-                authorId: id,
-                content: message,
-                date: new Date(),
-                viewedBy: [],
-            })
-            await newMessage.save()
-            const conversation = await ConversationModel.findById(conversationId)
-            if (conversation) {
-                conversation.lastMessage = message;
-                conversation.lastMessageDate = new Date()
-                conversation.lastMessageAuthorId = id
-                conversation.lastMessageId = newMessage._id as string
-                await conversation.save()
-                const otherId = conversation.usersId.filter(userId => userId !== id)[0]
-                if (users[otherId]) {
-                    users[otherId].emit('newMessage', { conversationId })
-                }
-            }
-            socket.emit('sendMessage', { success: true })
-        } catch (error) {
-            console.log(error);
-            socket.emit('sendMessage', { success: false })
         }
     });
 

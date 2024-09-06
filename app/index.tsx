@@ -3,11 +3,11 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 import { StatusBar } from 'expo-status-bar'
 import { useRouter } from 'expo-router'
 import { getSecureData } from './utils/getData'
-import { deleteSecureData } from './utils/deleteData'
 import Button from './Components/Button'
 import * as StyleConst from './constantes/stylesConst'
 import { useStorageData } from './hooks/useStorageData'
 import { emitAndListenEvent } from './utils/events'
+import { deleteSecureData } from './utils/deleteData'
 
 const Index = () => {
 
@@ -17,6 +17,7 @@ const Index = () => {
   useEffect(() => {
     const fetchDatas = async () => {
       if (loading) return
+      // await deleteSecureData('login')
       const login = await getSecureData('login')
       setTimeout(() => {
         if (login === "true") {

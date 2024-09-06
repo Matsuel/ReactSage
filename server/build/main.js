@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -23,6 +46,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const conversation_1 = require("./scheme/conversation");
 const mongoose_1 = __importDefault(require("mongoose"));
 const message_1 = require("./scheme/message");
+const fs_1 = require("fs");
 const IPTOUSE = (0, getLocalIp_1.getLocalIpV4)();
 console.log("\x1b[34mServer will run on IP:", IPTOUSE, "\x1b[0m");
 const hasFlags = (...flags) => flags.every(flag => process.argv.includes(/^-{1,2}/.test(flag) ? flag : '--' + flag));
@@ -37,46 +61,37 @@ if (!io) {
     process.exit();
 }
 let users = {};
+// const events = require('fs').readdirSync(__dirname + '/events').map((file: string) => file.split('.')[0])
+// events.forEach((event: string) => {
+//     console.log(event);
+//     import(`${__dirname}/events/${event}`)
+//         .then(eventFunction => {
+//             const args = eventFunction.default.toString().match(/\(([^)]+)\)/)[1].split(',').map((arg: string) => arg.trim())
+//             console.log('Event:', event, 'Args:', args);
+//             io.on(event, (data: any) => {
+//                 if (args.length === 3) eventFunction.default(data, io, users)
+//                 else eventFunction.default(data, io)
+//             })
+//         })
+//         .catch(console.error)
+// })
 io.on('connection', (socket) => __awaiter(void 0, void 0, void 0, function* () {
-    socket.on('disconnect', function () {
-        console.log('user disconnected');
-        for (let [key, value] of Object.entries(users)) {
-            if (value === socket) {
-                delete users[key];
-                break;
-            }
-        }
-    });
-    socket.on('welcome', function message(data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { id } = data;
-            users[id] = socket;
-            socket.emit('welcome', { success: true });
-        });
-    });
-    socket.on('checkPin', function message(data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            console.log(data);
-            const { phone, pin } = data;
-            try {
-                const user = yield User_1.UserModel.findOne({ phone });
-                if (user) {
-                    const match = bcrypt_1.default.compareSync(pin, user.pin);
-                    if (match) {
-                        socket.emit('checkPin', { success: true, id: user._id, username: user.username });
-                    }
-                    else {
-                        socket.emit('checkPin', { success: false, message: 'Pin not match' });
-                    }
-                }
-                else {
-                    socket.emit('checkPin', { success: false, message: 'User not found' });
-                }
-            }
-            catch (error) {
-                socket.emit('checkPin', { success: false, message: 'Login failed' });
-            }
-        });
+    //recuperer la liste de tous les fichiers dans le dossier events
+    // pour chaque fichier, le nom de l'event est le nom du fichier sans l'extension et recuperer la fonction default
+    // pour chaque event, on ecoute l'event et on execute la fonction default
+    const events = (0, fs_1.readdirSync)(__dirname + '/events').map((file) => file.split('.')[0]);
+    events.forEach((event) => {
+        Promise.resolve(`${`${__dirname}/events/${event}`}`).then(s => __importStar(require(s))).then(eventFunction => {
+            const args = eventFunction.default.toString().match(/\(([^)]+)\)/)[1].split(',').map((arg) => arg.trim());
+            console.log('Event:', event, 'Args:', args);
+            socket.on(event, (data) => {
+                if (args.length === 3)
+                    eventFunction.default(data, socket, users);
+                else
+                    eventFunction.default(data, socket);
+            });
+        })
+            .catch(console.error);
     });
     socket.on('login', function message(data) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -109,24 +124,6 @@ io.on('connection', (socket) => __awaiter(void 0, void 0, void 0, function* () {
             }
             catch (error) {
                 socket.emit('register', { success: false });
-            }
-        });
-    });
-    socket.on('searchUsers', function message(data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            console.log('received: %s', data);
-            const { id, search } = data;
-            try {
-                let users = yield User_1.UserModel.find({ username: { $regex: search, $options: 'i' } }).select('username phone _id picture');
-                // supprimer l'utilisateur courant de la liste
-                // parmis les utilisateurs trouvés il faut supprimer les utilisateurs qui sont déjà dans les conversations de l'utilisateur courant
-                const conversations = yield conversation_1.ConversationModel.find({ usersId: { $in: [id] } }).select('usersId');
-                const usersId = conversations.map(conversation => conversation.usersId).flat();
-                users = users.filter(user => user._id.toString() !== id && !usersId.includes(user._id.toString()));
-                socket.emit('searchUsers', { success: true, users });
-            }
-            catch (error) {
-                socket.emit('searchUsers', { success: false });
             }
         });
     });
@@ -180,57 +177,37 @@ io.on('connection', (socket) => __awaiter(void 0, void 0, void 0, function* () {
             }
         });
     });
-    socket.on('getMessages', function message(data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { id, conversationId } = data;
-            try {
-                if (!(yield conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })))
-                    return socket.emit('getMessages', { success: false, message: 'Conversation not found' });
-                let conversationCollection = mongoose_1.default.model('Conversation' + conversationId, message_1.Message);
-                let messages = yield conversationCollection.find().sort({ createdAt: 1 });
-                socket.emit('getMessages', { success: true, messages });
-            }
-            catch (error) {
-                console.log(error);
-                socket.emit('getMessages', { success: false });
-            }
-        });
-    });
-    socket.on('sendMessage', function message(data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            console.log(data);
-            const { id, conversationId, message } = data;
-            try {
-                if (!(yield conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })))
-                    return socket.emit('sendMessage', { success: false, message: 'Conversation not found' });
-                let conversationCollection = mongoose_1.default.model('Conversation' + conversationId, message_1.Message);
-                const newMessage = new conversationCollection({
-                    authorId: id,
-                    content: message,
-                    date: new Date(),
-                    viewedBy: [],
-                });
-                yield newMessage.save();
-                const conversation = yield conversation_1.ConversationModel.findById(conversationId);
-                if (conversation) {
-                    conversation.lastMessage = message;
-                    conversation.lastMessageDate = new Date();
-                    conversation.lastMessageAuthorId = id;
-                    conversation.lastMessageId = newMessage._id;
-                    yield conversation.save();
-                    const otherId = conversation.usersId.filter(userId => userId !== id)[0];
-                    if (users[otherId]) {
-                        users[otherId].emit('newMessage', { conversationId });
-                    }
-                }
-                socket.emit('sendMessage', { success: true });
-            }
-            catch (error) {
-                console.log(error);
-                socket.emit('sendMessage', { success: false });
-            }
-        });
-    });
+    // socket.on('sendMessage', async function message(data) {
+    //     console.log(data);
+    //     const { id, conversationId, message } = data
+    //     try {
+    //         if (!await ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })) return socket.emit('sendMessage', { success: false, message: 'Conversation not found' })
+    //         let conversationCollection = mongoose.model('Conversation' + conversationId, Message)
+    //         const newMessage = new conversationCollection({
+    //             authorId: id,
+    //             content: message,
+    //             date: new Date(),
+    //             viewedBy: [],
+    //         })
+    //         await newMessage.save()
+    //         const conversation = await ConversationModel.findById(conversationId)
+    //         if (conversation) {
+    //             conversation.lastMessage = message;
+    //             conversation.lastMessageDate = new Date()
+    //             conversation.lastMessageAuthorId = id
+    //             conversation.lastMessageId = newMessage._id as string
+    //             await conversation.save()
+    //             const otherId = conversation.usersId.filter(userId => userId !== id)[0]
+    //             if (users[otherId]) {
+    //                 users[otherId].emit('newMessage', { conversationId })
+    //             }
+    //         }
+    //         socket.emit('sendMessage', { success: true })
+    //     } catch (error) {
+    //         console.log(error);
+    //         socket.emit('sendMessage', { success: false })
+    //     }
+    // });
     socket.on('typing', function message(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id, conversationId, name } = data;
