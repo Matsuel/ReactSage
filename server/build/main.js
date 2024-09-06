@@ -177,37 +177,6 @@ io.on('connection', (socket) => __awaiter(void 0, void 0, void 0, function* () {
             }
         });
     });
-    // socket.on('sendMessage', async function message(data) {
-    //     console.log(data);
-    //     const { id, conversationId, message } = data
-    //     try {
-    //         if (!await ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })) return socket.emit('sendMessage', { success: false, message: 'Conversation not found' })
-    //         let conversationCollection = mongoose.model('Conversation' + conversationId, Message)
-    //         const newMessage = new conversationCollection({
-    //             authorId: id,
-    //             content: message,
-    //             date: new Date(),
-    //             viewedBy: [],
-    //         })
-    //         await newMessage.save()
-    //         const conversation = await ConversationModel.findById(conversationId)
-    //         if (conversation) {
-    //             conversation.lastMessage = message;
-    //             conversation.lastMessageDate = new Date()
-    //             conversation.lastMessageAuthorId = id
-    //             conversation.lastMessageId = newMessage._id as string
-    //             await conversation.save()
-    //             const otherId = conversation.usersId.filter(userId => userId !== id)[0]
-    //             if (users[otherId]) {
-    //                 users[otherId].emit('newMessage', { conversationId })
-    //             }
-    //         }
-    //         socket.emit('sendMessage', { success: true })
-    //     } catch (error) {
-    //         console.log(error);
-    //         socket.emit('sendMessage', { success: false })
-    //     }
-    // });
     socket.on('typing', function message(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const { id, conversationId, name } = data;
