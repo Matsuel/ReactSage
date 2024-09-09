@@ -15,8 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const User_1 = require("../scheme/User");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const checkPin = (data, socket) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(data);
-    console.log('checkPin');
     const { phone, pin } = data;
     try {
         const user = yield User_1.UserModel.findOne({ phone });

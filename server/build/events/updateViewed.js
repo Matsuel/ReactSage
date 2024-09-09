@@ -17,7 +17,6 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const message_1 = require("../scheme/message");
 const updateViewed = (data, socket) => __awaiter(void 0, void 0, void 0, function* () {
     const { id, conversationId } = data;
-    console.log(data);
     if (!(yield conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })))
         return socket.emit('updateViewed', { success: false, message: 'Conversation not found' });
     const conversation = yield conversation_1.ConversationModel.findById(conversationId);

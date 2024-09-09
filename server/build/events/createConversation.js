@@ -17,7 +17,6 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const message_1 = require("../scheme/message");
 const createConversation = (data, socket) => __awaiter(void 0, void 0, void 0, function* () {
     const { id, otherId } = data;
-    console.log(id, otherId);
     try {
         if (yield conversation_1.ConversationModel.findOne({ usersId: [id, otherId] }))
             return socket.emit('createConversation', { success: false, message: 'Conversation already exist' });
