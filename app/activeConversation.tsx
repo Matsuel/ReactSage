@@ -10,6 +10,7 @@ import Message from './Components/Message'
 import * as Haptics from 'expo-haptics'
 import Typing from './Components/Typing'
 import MessageView from './Components/MessageView'
+import ConversationHeader from './Components/ConversationHeader'
 
 const ActiveConversation = () => {
 
@@ -88,7 +89,7 @@ const ActiveConversation = () => {
 
     return (
         <View style={styles.container}>
-            <ModalIndicator />
+            <ConversationHeader picture={picture as string} name={name as string} id={id as string} conversationId={conversationId as string} />
             <FlatList
                 style={styles.flatList}
                 data={messages}

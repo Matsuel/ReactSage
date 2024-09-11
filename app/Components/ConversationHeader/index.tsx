@@ -9,25 +9,25 @@ import Button from '../Button';
 interface ConversationHeaderProps {
     picture: string;
     name: string;
+    id: string;
+    conversationId: string;
 }
 
 const ConversationHeader = ({
     picture,
-    name
+    name,
+    conversationId,
+    id
 }: ConversationHeaderProps) => {
 
     const router = useRouter()
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-                <LeftArrow color='#fff' width={25} stroke={2} />
+            <View style={styles.indicator} />
+            <TouchableOpacity style={styles.infosContainer} onPress={() => router.push({ pathname: "conversationInfos", params: { conversationId, id, picture, name } })}>
+                <Avatar picture={picture} username={name} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.infosContainer}>
-                <Avatar picture={picture} username={name} width={40} />
-                <Text style={styles.name}>{name}</Text>
-            </TouchableOpacity>
-            <View style={styles.rightContainer} />
         </View>
     )
 }
