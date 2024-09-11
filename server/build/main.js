@@ -37,9 +37,7 @@ const getFileInApp_1 = require("./functions/getFileInApp");
 const replaceFilleContent_1 = require("./functions/replaceFilleContent");
 const initWS_1 = require("./functions/initWS");
 const connecToDb_1 = require("./functions/connecToDb");
-const Redis = __importStar(require("redis"));
-const http_1 = require("http");
-const socket_io_1 = require("socket.io");
+const fs_1 = require("fs");
 const IPTOUSE = (0, getLocalIp_1.getLocalIpV4)();
 console.log("\x1b[34mServer will run on IP:", IPTOUSE, "\x1b[0m");
 const hasFlags = (...flags) => flags.every(flag => process.argv.includes(/^-{1,2}/.test(flag) ? flag : '--' + flag));
@@ -54,82 +52,23 @@ if (!io) {
     process.exit();
 }
 let users = {};
-// io.on('connection', async (socket) => {
-//     //recuperer la liste de tous les fichiers dans le dossier events
-//     // pour chaque fichier, le nom de l'event est le nom du fichier sans l'extension et recuperer la fonction default
-//     // pour chaque event, on ecoute l'event et on execute la fonction default
-//     const events = readdirSync(__dirname + '/events').map((file: string) => file.split('.')[0])
-//     events.forEach((event: string) => {
-//         import(`${__dirname}/events/${event}`)
-//             .then(eventFunction => {
-//                 const args = eventFunction.default.toString().match(/\(([^)]+)\)/)[1].split(',').map((arg: string) => arg.trim())
-//                 console.log('Event:', event, 'Args:', args);
-//                 socket.on(event, (data: any) => {
-//                     if (args.length === 3) eventFunction.default(data, socket, users)
-//                     else eventFunction.default(data, socket)
-//                 })
-//             })
-//             .catch(console.error)
-//     })
-// });
+io.on('connection', (socket) => __awaiter(void 0, void 0, void 0, function* () {
+    //recuperer la liste de tous les fichiers dans le dossier events
+    // pour chaque fichier, le nom de l'event est le nom du fichier sans l'extension et recuperer la fonction default
+    // pour chaque event, on ecoute l'event et on execute la fonction default
+    const events = (0, fs_1.readdirSync)(__dirname + '/events').map((file) => file.split('.')[0]);
+    events.forEach((event) => {
+        Promise.resolve(`${`${__dirname}/events/${event}`}`).then(s => __importStar(require(s))).then(eventFunction => {
+            const args = eventFunction.default.toString().match(/\(([^)]+)\)/)[1].split(',').map((arg) => arg.trim());
+            console.log('Event:', event, 'Args:', args);
+            socket.on(event, (data) => {
+                if (args.length === 3)
+                    eventFunction.default(data, socket, users);
+                else
+                    eventFunction.default(data, socket);
+            });
+        })
+            .catch(console.error);
+    });
+}));
 (0, connecToDb_1.connectToDb)();
-const SLAVESSERVERCOUNT = 2;
-const redisClient = Redis.createClient({
-    url: 'redis://localhost:6379',
-});
-redisClient.on('error', (err) => {
-    console.error('Error connecting to Redis:', err);
-});
-redisClient.connect().then(() => {
-    console.log('Connected to Redis');
-}).catch(console.error);
-const getServerLoads = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        // Utiliser des méthodes basées sur les promesses
-        const keys = yield redisClient.keys('server:*:load');
-        if (keys.length === 0)
-            return {};
-        const loads = yield redisClient.mGet(keys);
-        const serverLoads = {};
-        keys.forEach((key, index) => {
-            const serverId = key.split(':')[1];
-            serverLoads[serverId] = parseInt(loads[index] || '0', 10);
-        });
-        return serverLoads;
-    }
-    catch (err) {
-        console.error('Error fetching server loads:', err);
-        throw err;
-    }
-});
-for (let i = 0; i < SLAVESSERVERCOUNT; i++) {
-    const port = 8090 + i;
-    const server = (0, http_1.createServer)();
-    server.listen(port, IPTOUSE, () => {
-        console.log(`Server running at http://${IPTOUSE}:${port}/`);
-    });
-    const updateLoad = () => {
-        redisClient.set(`server:${port}:load`, currentLoad);
-    };
-    const io = new socket_io_1.Server(server);
-    let currentLoad = 0;
-    updateLoad();
-    // Gérer les connexions WebSocket
-    io.on('connection', (socket) => {
-        currentLoad++;
-        updateLoad();
-        console.log(`Client connected on port ${port}. Current load: ${currentLoad}`);
-        socket.on('disconnect', () => {
-            currentLoad--;
-            updateLoad();
-            console.log(`Client disconnected on port ${port}. Current load: ${currentLoad}`);
-        });
-        // Exemple de traitement des messages
-        socket.on('message', (msg) => {
-            // Logique pour traiter le message
-        });
-    });
-}
-getServerLoads().then((serverLoads) => {
-    console.log('Server loads:', serverLoads);
-}).catch(console.error);
