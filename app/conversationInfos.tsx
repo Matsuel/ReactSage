@@ -32,15 +32,29 @@ const conversationInfos = () => {
     <View style={styles.container}>
       <ModalIndicator />
       <Avatar picture={picture as string} username={name as string} width={80} fontSize={35} />
-      <ConversationInfo title="Nom" data={name as string} />
-      <ConversationInfo title="Date de création" data={createdAt} />
-      <Text style={styles.title}>Participants</Text>
-      {usersInfos.map((user: any, index: number) => (
-        <TouchableOpacity key={index}>
-          <ConversationInfo dataComponent={<Avatar picture={user.picture} username={user.username} width={25} fontSize={12} />} title={user.username} />
-        </TouchableOpacity>
-      ))}
+      <View style={styles.InfosContainer}>
+        <ConversationInfo title="Nom" data={name as string} />
+        <ConversationInfo title="Date de création" data={createdAt} />
+      </View>
 
+      <Text style={styles.title}>Participants</Text>
+
+      <View style={styles.InfosContainer}>
+        {usersInfos.map((user: any, index: number) => (
+          <TouchableOpacity key={index}>
+            <ConversationInfo dataComponent={<Avatar picture={user.picture} username={user.username} width={25} fontSize={12} />} title={user.username} />
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <View style={styles.InfosContainer}>
+        <TouchableOpacity key={"block"} style={styles.infos}>
+          <Text style={[styles.text, { color: "#007AFF" }]}>Bloquer le correspondant</Text>
+        </TouchableOpacity>
+        <TouchableOpacity key={"delete"} style={styles.infos}>
+          <Text style={[styles.text, { color: "#ff0000" }]}>Supprimer la conversation</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   )
 }
@@ -56,6 +70,7 @@ const styles = StyleSheet.create({
     backgroundColor: StyleConst.BackgroundColor,
     alignItems: 'center',
     justifyContent: "flex-start",
+    gap: 20
   },
   title: {
     textAlign: 'left',
@@ -64,6 +79,28 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 20,
     marginBottom: 10
+  },
+  InfosContainer: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10
+  },
+  infos: {
+    width: '100%',
+    height: "auto",
+    flexDirection: "row",
+    backgroundColor: StyleConst.InfoBackgroundColor,
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 15,
+    paddingLeft: 15,
+    paddingRight: 25,
+    borderRadius: StyleConst.BorderRadius,
+  },
+  text: {
+    fontSize: 16,
+    color: StyleConst.TextColor,
+    marginLeft: 10,
   }
-
 })
