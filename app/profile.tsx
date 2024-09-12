@@ -2,13 +2,24 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import * as StyleConst from './constantes/stylesConst'
 import ModalIndicator from './Components/ModalIndicator'
+import { BlurView } from 'expo-blur';
+import Avatar from './Components/Avatar';
+import { useLocalSearchParams } from 'expo-router';
 
 const Profile = () => {
+
+    const params = useLocalSearchParams()
+    const { username } = params
+
     return (
-        <View style={styles.container}>
+        <BlurView
+            style={styles.container}
+            intensity={30}
+            tint="dark"
+        >
             <ModalIndicator />
-            <Text>Profile</Text>
-        </View>
+            <Avatar picture='' username={username as string} width={60} />
+        </BlurView>
     )
 }
 
@@ -18,7 +29,6 @@ const styles = StyleSheet.create({
     container: {
         width: '100%',
         height: '100%',
-        backgroundColor: StyleConst.ModalBackgroundColor,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-start',

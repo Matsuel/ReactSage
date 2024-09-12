@@ -37,7 +37,8 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "^15.5.0",
     "socket.io-client": "^4.7.5",
-    "sync-storage": "^0.4.2"
+    "sync-storage": "^0.4.2",
+    "expo-blur": "~13.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

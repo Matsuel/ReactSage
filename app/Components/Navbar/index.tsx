@@ -17,7 +17,7 @@ const Navbar = () => {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={() => router.push({ pathname: "/profile" })}>
+            <TouchableOpacity onPress={() => router.push({ pathname: "/profile", params: { username } })}>
                 <Avatar picture='' username={usernameFirstLetter as string} width={35} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push({ pathname: "/createconversation", params: { id: userId } })}>
