@@ -7,10 +7,12 @@ import * as StyleConst from "./stylesConst";
 import Protection from "../assets/Protection";
 import Trash from "../assets/Trash";
 import Power from "../assets/Power";
+import { router } from "expo-router";
 
 export interface ProfileData {
     text: string,
     icon: React.ReactNode,
+    onPress?: () => void,
 }
 
 const iconWidth = 30
@@ -26,6 +28,6 @@ export const profileDatas = {
     "2": [
         { text: "Voir les personnes bloquées", icon: <Protection color={StyleConst.TextColor} width={iconWidth} /> },
         { text: "Supprimer le compte", icon: <Trash color={StyleConst.TextColor} width={iconWidth} /> },
-        { text: "Déconnexion", icon: <Power color={StyleConst.TextColor} width={iconWidth} /> },
+        { text: "Déconnexion", icon: <Power color={StyleConst.TextColor} width={iconWidth} />, onPress: () => router.push("disconnect") },
     ] as ProfileData[],
 }

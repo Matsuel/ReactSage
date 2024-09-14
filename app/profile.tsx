@@ -30,7 +30,7 @@ const Profile = () => {
 
             <View style={styles.profilePart}>
                 {profileDatas["2"].map((data, index) => (
-                    <ProfileButton key={index} text={data.text} icon={data.icon} />
+                    <ProfileButton key={index} text={data.text} icon={data.icon} onPress={data.onPress} />
                 ))}
             </View>
         </BlurView>
