@@ -4,11 +4,29 @@ import * as StyleConst from './constantes/stylesConst'
 import ModalIndicator from './Components/ModalIndicator'
 import Title from './Components/Title'
 import Button from './Components/Button'
-import { router, useNavigation } from 'expo-router'
+import { router, useLocalSearchParams } from 'expo-router'
+import { useNavigation } from 'expo-router'
 import { deleteSecureData } from './utils/deleteData'
+import { useStorageData } from './hooks/useStorageData'
+import { emitAndListenEvent } from './utils/events'
 
-const Disconnect = () => {
+const ModalConfirm = () => {
+
+    const params = useLocalSearchParams()
+    const { title, subtitle } = params
+
     const { reset } = useNavigation()
+
+    const { data: id, loading } = useStorageData('id')
+
+    const deleteAccount = async () => {
+        emitAndListenEvent('deleteAccount', { id }, async (data) => {
+            console.log(data)
+            if(data.success) {
+                await disconnect()
+            }
+        })
+    }
 
     const disconnect = async () => {
         await deleteSecureData('phone')
@@ -19,20 +37,22 @@ const Disconnect = () => {
         reset({ index: 0, routes: [{ name: 'welcome' as never }] })
     }
 
+    if (loading) return null
+
     return (
         <View style={styles.container}>
             <ModalIndicator />
-            <Title title="Déconnexion" />
-            <Text style={styles.subtitle}>Êtes-vous sûr de vouloir vous déconnecter ?</Text>
+            <Title title={title as string} />
+            <Text style={styles.subtitle}>{subtitle}</Text>
             <View style={styles.btns}>
-                <Button variant='light' content='Déconnexion' onPress={disconnect} />
+                <Button variant='light' content='Confirmer' onPress={title as string === 'Suppression du compte' ? deleteAccount : disconnect} />
                 <Button variant='transparentLight' content='Annuler' onPress={() => router.back()} />
             </View>
         </View>
     )
 }
 
-export default Disconnect
+export default ModalConfirm
 
 const styles = StyleSheet.create({
     container: {

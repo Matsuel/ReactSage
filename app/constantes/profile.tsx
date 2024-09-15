@@ -27,7 +27,7 @@ export const profileDatas = {
     ] as ProfileData[],
     "2": [
         { text: "Voir les personnes bloquées", icon: <Protection color={StyleConst.TextColor} width={iconWidth} /> },
-        { text: "Supprimer le compte", icon: <Trash color={StyleConst.TextColor} width={iconWidth} /> },
-        { text: "Déconnexion", icon: <Power color={StyleConst.TextColor} width={iconWidth} />, onPress: () => router.push("disconnect") },
+        { text: "Supprimer le compte", icon: <Trash color={StyleConst.TextColor} width={iconWidth} />, onPress: () => router.push({ pathname: "/confirmModal" , params: { title: "Suppression du compte", subtitle: "Êtes-vous sûr de vouloir supprimer votre compte ?" } }) },
+        { text: "Déconnexion", icon: <Power color={StyleConst.TextColor} width={iconWidth} />, onPress: () => router.push({ pathname: "/confirmModal" , params: { title: "Déconnexion", subtitle: "Êtes-vous sûr de vouloir vous déconnecter ?" } }) },
     ] as ProfileData[],
 }

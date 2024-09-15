@@ -20,9 +20,7 @@ const ProfileButton = ({
     const onPressFunction = async () => {
         if (onPress) {
             onPress()
-        } else if (text === "Supprimer le compte") {
-            router.push({ pathname: "/deleteaccount" })
-        }
+        } 
     }
 
     return (
