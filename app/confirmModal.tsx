@@ -13,7 +13,7 @@ import { emitAndListenEvent } from './utils/events'
 const ModalConfirm = () => {
 
     const params = useLocalSearchParams()
-    const { title, subtitle } = params
+    const { title, subtitle, conversationId } = params
 
     const { reset } = useNavigation()
 
@@ -37,6 +37,26 @@ const ModalConfirm = () => {
         reset({ index: 0, routes: [{ name: 'welcome' as never }] })
     }
 
+    const deleteConversation = async () => {
+        emitAndListenEvent('deleteConversation', { id, conversationId }, (data) => {
+            if (data.success) {
+                reset({ index: 0, routes: [{ name: 'homepage' as never }] })
+            }
+        })
+    }
+
+    const onPress = async () => {
+        if(title as string === 'Suppression du compte') {
+            await deleteAccount()
+        } else if (title as string === 'Déconnexion') {
+            await disconnect()
+        } else if (title as string === 'Supprimer la conversation') {
+            await deleteConversation()
+        } else {
+            console.log('error')
+        }
+    }
+
     if (loading) return null
 
     return (
@@ -45,7 +65,7 @@ const ModalConfirm = () => {
             <Title title={title as string} />
             <Text style={styles.subtitle}>{subtitle}</Text>
             <View style={styles.btns}>
-                <Button variant='light' content='Confirmer' onPress={title as string === 'Suppression du compte' ? deleteAccount : disconnect} />
+                <Button variant='light' content='Confirmer' onPress={onPress} />
                 <Button variant='transparentLight' content='Annuler' onPress={() => router.back()} />
             </View>
         </View>

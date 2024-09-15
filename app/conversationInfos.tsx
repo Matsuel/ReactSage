@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import * as StyleConst from './constantes/stylesConst'
 import ModalIndicator from './Components/ModalIndicator'
-import { useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import Avatar from './Components/Avatar'
 import ConversationInfo from './Components/ConversationInfo'
 import { emitAndListenEvent } from './utils/events'
 
 const conversationInfos = () => {
 
+  const router = useRouter()
   const params = useLocalSearchParams()
   const { conversationId, id, picture, name } = params
   const [usersInfos, setUsersInfos] = useState([])
@@ -51,7 +52,7 @@ const conversationInfos = () => {
         <TouchableOpacity key={"block"} style={styles.infos}>
           <Text style={[styles.text, { color: "#007AFF" }]}>Bloquer le correspondant</Text>
         </TouchableOpacity>
-        <TouchableOpacity key={"delete"} style={styles.infos}>
+        <TouchableOpacity key={"delete"} style={styles.infos} onPress={() => router.push({ pathname: "/confirmModal", params: { title: "Supprimer la conversation", subtitle: "Êtes-vous sûr de vouloir supprimer cette conversation ?", conversationId } })}>
           <Text style={[styles.text, { color: "#ff0000" }]}>Supprimer la conversation</Text>
         </TouchableOpacity>
       </View>
