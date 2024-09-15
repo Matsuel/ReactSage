@@ -17,6 +17,7 @@ export default function Layout() {
             <Stack.Screen name='profile' options={{ headerShown: false, gestureEnabled: true, presentation: "modal", contentStyle: StyleConst.modalStyles.container }} />
             <Stack.Screen name='conversationInfos' options={{ headerShown: false, gestureEnabled: true, presentation: "modal", contentStyle: StyleConst.modalStyles.container }} />
             <Stack.Screen name='disconnect' options={{ headerShown: false, gestureEnabled: true, presentation: "modal", contentStyle: StyleConst.modalStyles.container }} />
+            <Stack.Screen name='deleteaccount' options={{ headerShown: false, gestureEnabled: true, presentation: "modal", contentStyle: StyleConst.modalStyles.container }} />
         </Stack>
     )
 }

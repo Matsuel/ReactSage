@@ -38,8 +38,6 @@ const replaceFilleContent_1 = require("./functions/replaceFilleContent");
 const initWS_1 = require("./functions/initWS");
 const connecToDb_1 = require("./functions/connecToDb");
 const fs_1 = require("fs");
-const conversation_1 = require("./scheme/conversation");
-const User_1 = require("./scheme/User");
 const IPTOUSE = (0, getLocalIp_1.getLocalIpV4)();
 console.log("\x1b[34mServer will run on IP:", IPTOUSE, "\x1b[0m");
 const hasFlags = (...flags) => flags.every(flag => process.argv.includes(/^-{1,2}/.test(flag) ? flag : '--' + flag));
@@ -72,29 +70,5 @@ io.on('connection', (socket) => __awaiter(void 0, void 0, void 0, function* () {
         })
             .catch(console.error);
     });
-    socket.on('conversationInfos', (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { conversationId, id } = data;
-        try {
-            if (!(yield conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })))
-                return socket.emit('getMessages', { success: false, message: 'Conversation not found' });
-            const conversation = yield conversation_1.ConversationModel.findOne({ _id: conversationId });
-            if (!conversation)
-                return socket.emit('getMessages', { success: false, message: 'Conversation not found' });
-            const createdAt = conversation.createdAt;
-            let usersInfos = [];
-            for (let userId of conversation.usersId) {
-                const user = yield User_1.UserModel.findOne({ _id: userId });
-                if (!user)
-                    return socket.emit('getMessages', { success: false, message: 'User not found' });
-                usersInfos.push({ id: user._id, username: user.username, picture: user.picture });
-            }
-            // plus tard les pièces jointes
-            socket.emit('conversationInfos', { success: true, conversationInfos: { usersInfos, createdAt } });
-        }
-        catch (error) {
-            console.log(error);
-            socket.emit('getMessages', { success: false });
-        }
-    }));
 }));
 (0, connecToDb_1.connectToDb)();

@@ -1,6 +1,9 @@
 import React from 'react'
 import styles from './ProfileButton.style'
 import { Text, TouchableOpacity } from 'react-native'
+import { emitAndListenEvent } from '../../utils/events'
+import { deleteSecureData } from '../../utils/deleteData'
+import { router, useNavigation } from 'expo-router'
 
 export interface ProfileData {
     text: string,
@@ -11,16 +14,19 @@ export interface ProfileData {
 const ProfileButton = ({
     text,
     icon,
-    onPress,
+    onPress
 }: ProfileData) => {
 
-    console.log('ProfileButton', text)
-    console.log(onPress);
-    ;
-    
+    const onPressFunction = async () => {
+        if (onPress) {
+            onPress()
+        } else if (text === "Supprimer le compte") {
+            router.push({ pathname: "/deleteaccount" })
+        }
+    }
 
     return (
-        <TouchableOpacity style={styles.profileTab} key={text} onPress={onPress}>
+        <TouchableOpacity style={styles.profileTab} key={text} onPress={onPressFunction}>
             {icon}
             <Text style={styles.profileTabText}>{text}</Text>
         </TouchableOpacity>

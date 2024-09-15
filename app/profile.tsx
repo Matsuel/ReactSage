@@ -11,7 +11,7 @@ import ProfileButton from './Components/ProfileButton';
 const Profile = () => {
 
     const params = useLocalSearchParams()
-    const { username } = params
+    const { username, id } = params
 
     return (
         <BlurView
