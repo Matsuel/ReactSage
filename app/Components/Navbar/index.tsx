@@ -5,6 +5,7 @@ import { useStorageData } from '../../hooks/useStorageData'
 import Avatar from '../Avatar'
 import NewConversation from '../../assets/NewConversation'
 import { useRouter } from 'expo-router'
+import * as Haptics from 'expo-haptics'
 
 const Navbar = () => {
 
@@ -15,12 +16,22 @@ const Navbar = () => {
 
     const { data: userId } = useStorageData('id')
 
+    const goToProfile = () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        router.push({ pathname: "/profile", params: { username, id: userId } })
+    }
+
+    const goToCreateConversation = () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        router.push({ pathname: "/createconversation", params: { id: userId } })
+    }
+
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={() => router.push({ pathname: "/profile", params: { username, id: userId } })}>
+            <TouchableOpacity onPress={goToProfile}>
                 <Avatar picture='' username={usernameFirstLetter as string} width={35} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push({ pathname: "/createconversation", params: { id: userId } })}>
+            <TouchableOpacity onPress={goToCreateConversation}>
                 <NewConversation color='#fff' width={30} />
             </TouchableOpacity>
         </View>

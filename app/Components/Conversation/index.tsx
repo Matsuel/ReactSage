@@ -5,6 +5,7 @@ import * as StyleConst from '../../constantes/stylesConst'
 import Avatar from '../Avatar'
 import { useRouter } from 'expo-router'
 import { formatDate } from '../../utils/formatDate'
+import * as Haptics from 'expo-haptics'
 
 interface ConversationComponentProps {
     usersId: string[]
@@ -37,10 +38,15 @@ const ConversationComponent = ({
 }: ConversationComponentProps) => {
 
     const router = useRouter()
+
+    const redirectToConversation = () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        router.push({ pathname: 'activeConversation', params: { conversationId: _id, picture, name, id } })
+    }
     
 
     return (
-        <TouchableOpacity style={styles.container} onPress={() => router.push({ pathname: 'activeConversation', params: { conversationId: _id, picture, name, id } })}>
+        <TouchableOpacity style={styles.container} onPress={redirectToConversation}>
             <Avatar picture={picture} username={name} width={40} />
             <View style={styles.conversationInfo}>
                 <Text style={styles.username}>{name}</Text>

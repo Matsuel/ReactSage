@@ -1,10 +1,9 @@
 import React from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 import { styles } from './ConversationHeader.style'
 import Avatar from '../Avatar';
-import LeftArrow from '../../assets/LeftArrow';
 import { useRouter } from 'expo-router';
-import Button from '../Button';
+import * as Haptics from 'expo-haptics';
 
 interface ConversationHeaderProps {
     picture: string;
@@ -22,10 +21,15 @@ const ConversationHeader = ({
 
     const router = useRouter()
 
+    const goToInfos = () => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        router.push({ pathname: "conversationInfos", params: { conversationId, id, picture, name } })
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.indicator} />
-            <TouchableOpacity style={styles.infosContainer} onPress={() => router.push({ pathname: "conversationInfos", params: { conversationId, id, picture, name } })}>
+            <TouchableOpacity style={styles.infosContainer} onPress={goToInfos}>
                 <Avatar picture={picture} username={name} />
             </TouchableOpacity>
         </View>
