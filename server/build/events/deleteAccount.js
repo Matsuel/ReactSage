@@ -17,25 +17,23 @@ const conversation_1 = require("../scheme/conversation");
 const message_1 = require("../scheme/message");
 const mongoose_1 = __importDefault(require("mongoose"));
 const createConversation = (data, socket) => __awaiter(void 0, void 0, void 0, function* () {
-    socket.on('deleteAccount', (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { id } = data;
-        try {
-            yield User_1.UserModel.deleteOne({ _id: id });
-            // recuperer tous les id des conversations de l'utilisateur
-            const conversations = yield conversation_1.ConversationModel.find({ usersId: { $in: [id] } });
-            // suppression toutes les conversations
-            yield conversation_1.ConversationModel.deleteMany({ usersId: { $in: [id] } });
-            // pour chaque conversation supprimer la collection des messages conversation+id
-            for (let conversation of conversations) {
-                const conversationCollection = mongoose_1.default.model('Conversation' + conversation._id, message_1.Message);
-                yield conversationCollection.collection.drop();
-            }
-            socket.emit('deleteAccount', { success: true });
+    const { id } = data;
+    try {
+        yield User_1.UserModel.deleteOne({ _id: id });
+        // recuperer tous les id des conversations de l'utilisateur
+        const conversations = yield conversation_1.ConversationModel.find({ usersId: { $in: [id] } });
+        // suppression toutes les conversations
+        yield conversation_1.ConversationModel.deleteMany({ usersId: { $in: [id] } });
+        // pour chaque conversation supprimer la collection des messages conversation+id
+        for (let conversation of conversations) {
+            const conversationCollection = mongoose_1.default.model('Conversation' + conversation._id, message_1.Message);
+            yield conversationCollection.collection.drop();
         }
-        catch (error) {
-            console.log(error);
-            socket.emit('deleteAccount', { success: false });
-        }
-    }));
+        socket.emit('deleteAccount', { success: true });
+    }
+    catch (error) {
+        console.log(error);
+        socket.emit('deleteAccount', { success: false });
+    }
 });
 exports.default = createConversation;

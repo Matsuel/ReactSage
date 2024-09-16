@@ -16,24 +16,22 @@ const conversation_1 = require("../scheme/conversation");
 const message_1 = require("../scheme/message");
 const mongoose_1 = __importDefault(require("mongoose"));
 const createConversation = (data, socket) => __awaiter(void 0, void 0, void 0, function* () {
-    socket.on('deleteConversation', (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { id, conversationId } = data;
-        try {
-            if (!(yield conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })))
-                return socket.emit('getMessages', { success: false, message: 'Conversation not found' });
-            const conversation = yield conversation_1.ConversationModel.findOne({ _id: conversationId });
-            if (!conversation)
-                return socket.emit('getMessages', { success: false, message: 'Conversation not found' });
-            yield conversation_1.ConversationModel.deleteOne({ _id: conversationId });
-            // supprimer la collection des messages de la conversation
-            const conversationCollection = mongoose_1.default.model('Conversation' + conversation._id, message_1.Message);
-            yield conversationCollection.collection.drop();
-            socket.emit('deleteConversation', { success: true });
-        }
-        catch (error) {
-            console.log(error);
-            socket.emit('deleteConversation', { success: false });
-        }
-    }));
+    const { id, conversationId } = data;
+    try {
+        if (!(yield conversation_1.ConversationModel.findOne({ _id: conversationId, usersId: { $in: [id] } })))
+            return socket.emit('getMessages', { success: false, message: 'Conversation not found' });
+        const conversation = yield conversation_1.ConversationModel.findOne({ _id: conversationId });
+        if (!conversation)
+            return socket.emit('getMessages', { success: false, message: 'Conversation not found' });
+        yield conversation_1.ConversationModel.deleteOne({ _id: conversationId });
+        // supprimer la collection des messages de la conversation
+        const conversationCollection = mongoose_1.default.model('Conversation' + conversation._id, message_1.Message);
+        yield conversationCollection.collection.drop();
+        socket.emit('deleteConversation', { success: true });
+    }
+    catch (error) {
+        console.log(error);
+        socket.emit('deleteConversation', { success: false });
+    }
 });
 exports.default = createConversation;

@@ -17,6 +17,7 @@ const conversationInfos = () => {
 
   useEffect(() => {
     emitAndListenEvent('conversationInfos', { conversationId, id }, (data) => {
+      console.log(data)
       if (data.success) {
         setUsersInfos(data.conversationInfos.usersInfos)
         const date = new Date(data.conversationInfos.createdAt)
