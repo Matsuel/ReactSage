@@ -4,12 +4,10 @@ import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, TextInput, Toucha
 import * as StyleConst from './constantes/stylesConst'
 import { emitAndListenEvent, emitEvent, listenEvent } from './utils/events'
 import { MessageInterfaceComponent } from '../server/type'
-import ModalIndicator from './Components/ModalIndicator'
 import Send from './assets/Send'
 import Message from './Components/Message'
 import * as Haptics from 'expo-haptics'
 import Typing from './Components/Typing'
-import MessageView from './Components/MessageView'
 import ConversationHeader from './Components/ConversationHeader'
 
 const ActiveConversation = () => {
@@ -26,8 +24,6 @@ const ActiveConversation = () => {
 
 
     useEffect(() => {
-        emitEvent('updateViewed', { id, conversationId })
-
         emitAndListenEvent('getMessages', { id, conversationId }, (data) => {
             if (data.success) {
                 setMessages(data.messages)
@@ -45,6 +41,11 @@ const ActiveConversation = () => {
     }, [])
 
     useEffect(() => {
+        if (messages.length === 0) return
+        emitEvent('updateViewed', { id, conversationId })
+    }, [messages])
+
+    useEffect(() => {
         listenEvent('typing', (data) => {
             const { name: typingUser } = data
             if (usernameTyping.includes(typingUser)) return
@@ -53,7 +54,7 @@ const ActiveConversation = () => {
             setTimeout(() => {
                 flatListRef.current?.scrollToEnd({ animated: true })
             }, 60)
-            
+
             if (typingTimeout.current) clearTimeout(typingTimeout.current)
 
             typingTimeout.current = setTimeout(() => {
