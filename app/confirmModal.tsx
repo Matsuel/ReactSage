@@ -77,7 +77,8 @@ export default ModalConfirm
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        height: '40%',
+        height: 'auto',
+        minHeight: '40%',
         maxHeight: '75%',
         paddingLeft: "5%",
         paddingRight: "5%",
