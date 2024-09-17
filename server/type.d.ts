@@ -12,6 +12,7 @@ export interface UserInterface extends mongoose.Document {
     options: UserOptions;
     joinedAt: Date;
     color: string;
+    lockedId: string[];
 }
 
 export interface UserInterfaceComponent {

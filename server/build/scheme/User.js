@@ -15,5 +15,6 @@ exports.User = new mongoose_1.default.Schema({
         showOnline: { type: Boolean, default: true },
     },
     color: { type: String, default: '#000' },
+    lockedId: { type: [String], default: [] },
 }, { collection: 'users' });
 exports.UserModel = mongoose_1.default.model('User', exports.User);

@@ -11,6 +11,7 @@ export const User = new mongoose.Schema<UserInterface>({
         showOnline: { type: Boolean, default: true },
     },
     color: { type: String, default: '#000' },
+    lockedId: { type: [String], default: [] },
 }, { collection: 'users' })
 
 export const UserModel = mongoose.model<UserInterface>('User', User)

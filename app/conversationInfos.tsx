@@ -1,23 +1,33 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View, ActionSheetIOS } from 'react-native'
 import * as StyleConst from './constantes/stylesConst'
 import ModalIndicator from './Components/ModalIndicator'
-import { useLocalSearchParams, useRouter } from 'expo-router'
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import Avatar from './Components/Avatar'
 import ConversationInfo from './Components/ConversationInfo'
 import { emitAndListenEvent } from './utils/events'
+
+interface Userinfos {
+  picture: string;
+  phone: string;
+  username: string;
+  id: string;
+}
 
 const conversationInfos = () => {
 
   const router = useRouter()
   const params = useLocalSearchParams()
   const { conversationId, id, picture, name } = params
-  const [usersInfos, setUsersInfos] = useState([])
+  const [usersInfos, setUsersInfos] = useState<Userinfos[]>([])
   const [createdAt, setCreatedAt] = useState('')
+  const { reset } = useNavigation()
 
   useEffect(() => {
     emitAndListenEvent('conversationInfos', { conversationId, id }, (data) => {
       if (data.success) {
+        console.log(data.conversationInfos.usersInfos);
+
         setUsersInfos(data.conversationInfos.usersInfos)
         const date = new Date(data.conversationInfos.createdAt)
         const day = date.getDate()
@@ -28,6 +38,30 @@ const conversationInfos = () => {
       }
     })
   }, [])
+
+  const blockParticipant = () => {
+    ActionSheetIOS.showActionSheetWithOptions(
+      {
+        options: ['Annuler', 'Bloquer le correspondant'],
+        destructiveButtonIndex: 1,
+        cancelButtonIndex: 0,
+      },
+      (buttonIndex) => {
+        if (buttonIndex === 1) {
+          const userToLock = usersInfos.filter((user: any) => user.id !== id)[0].id
+          emitAndListenEvent('blockParticipant', { conversationId, id, userToLock }, (data) => {
+            if (data.success) {
+              emitAndListenEvent('deleteConversation', { id, conversationId }, (data) => {
+                if (data.success) {
+                  reset({ index: 0, routes: [{ name: 'homepage' as never }] })
+                }
+              })
+            }
+          })
+        }
+      }
+    )
+  }
 
   return (
     <View style={styles.container}>
@@ -49,7 +83,7 @@ const conversationInfos = () => {
       </View>
 
       <View style={styles.InfosContainer}>
-        <TouchableOpacity key={"block"} style={styles.infos}>
+        <TouchableOpacity key={"block"} style={styles.infos} onPress={blockParticipant}>
           <Text style={[styles.text, { color: "#007AFF" }]}>Bloquer le correspondant</Text>
         </TouchableOpacity>
         <TouchableOpacity key={"delete"} style={styles.infos} onPress={() => router.push({ pathname: "/confirmModal", params: { title: "Supprimer la conversation", subtitle: "Êtes-vous sûr de vouloir supprimer cette conversation ?", conversationId } })}>
