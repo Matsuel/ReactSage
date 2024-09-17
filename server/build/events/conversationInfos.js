@@ -22,7 +22,6 @@ const conversationInfos = (data, socket) => __awaiter(void 0, void 0, void 0, fu
         const createdAt = conversation.createdAt;
         let usersInfos = [];
         for (let userId of conversation.usersId) {
-            console.log(userId);
             const user = yield User_1.UserModel.findOne({ _id: userId });
             if (!user)
                 return socket.emit('conversationInfos', { success: false, message: 'User not found' });
