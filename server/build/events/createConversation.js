@@ -23,6 +23,17 @@ const createConversation = (data, socket) => __awaiter(void 0, void 0, void 0, f
             return socket.emit('createConversation', { success: false, message: 'Conversation already exist' });
         if (yield conversation_1.ConversationModel.findOne({ usersId: [otherId, id] }))
             return socket.emit('createConversation', { success: false, message: 'Conversation already exist' });
+        // si l'utilisateur courant a bloqué l'autre utilisateur, il faut le débloquer
+        const requestedUser = yield User_1.UserModel.findById(id);
+        if (requestedUser) {
+            requestedUser.lockedId = requestedUser.lockedId.filter((lockedId) => lockedId !== otherId);
+            yield requestedUser.save();
+        }
+        // si l'autre utilisateur a bloqué l'utilisateur courant, on ne peut pas créer la conversation
+        const otherUser = yield User_1.UserModel.findById(otherId);
+        if (otherUser && otherUser.lockedId.includes(id)) {
+            return socket.emit('createConversation', { success: false, message: 'You are blocked by this user' });
+        }
         const conversation = new conversation_1.ConversationModel({
             usersId: [id, otherId],
             isGroup: false,
@@ -32,12 +43,6 @@ const createConversation = (data, socket) => __awaiter(void 0, void 0, void 0, f
         yield conversation.save();
         let conversationCollection = mongoose_1.default.model('Conversation' + conversation._id, message_1.Message);
         conversationCollection.createCollection();
-        // si l'utilisateur courant a bloqué l'autre utilisateur, il faut le débloquer
-        const requestedUser = yield User_1.UserModel.findById(id);
-        if (requestedUser) {
-            requestedUser.lockedId = requestedUser.lockedId.filter((lockedId) => lockedId !== otherId);
-            yield requestedUser.save();
-        }
         socket.emit('createConversation', { success: true });
     }
     catch (error) {
