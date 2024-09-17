@@ -2,6 +2,7 @@ import { Socket } from "socket.io";
 import { ConversationModel } from "../scheme/conversation";
 import mongoose from "mongoose";
 import { Message } from "../scheme/message";
+import { UserModel } from "../scheme/User";
 
 const createConversation = async (data: { id: string, otherId: string }, socket: Socket) => {
     const { id, otherId } = data
@@ -17,6 +18,12 @@ const createConversation = async (data: { id: string, otherId: string }, socket:
         await conversation.save()
         let conversationCollection = mongoose.model('Conversation' + conversation._id, Message)
         conversationCollection.createCollection()
+        // si l'utilisateur courant a bloqué l'autre utilisateur, il faut le débloquer
+        const requestedUser = await UserModel.findById(id)
+        if (requestedUser) {
+            requestedUser.lockedId = requestedUser.lockedId.filter((lockedId: string) => lockedId !== otherId)
+            await requestedUser.save()
+        }
         socket.emit('createConversation', { success: true })
     } catch (error) {
         console.log(error);

@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const conversation_1 = require("../scheme/conversation");
 const mongoose_1 = __importDefault(require("mongoose"));
 const message_1 = require("../scheme/message");
+const User_1 = require("../scheme/User");
 const createConversation = (data, socket) => __awaiter(void 0, void 0, void 0, function* () {
     const { id, otherId } = data;
     try {
@@ -31,6 +32,12 @@ const createConversation = (data, socket) => __awaiter(void 0, void 0, void 0, f
         yield conversation.save();
         let conversationCollection = mongoose_1.default.model('Conversation' + conversation._id, message_1.Message);
         conversationCollection.createCollection();
+        // si l'utilisateur courant a bloqué l'autre utilisateur, il faut le débloquer
+        const requestedUser = yield User_1.UserModel.findById(id);
+        if (requestedUser) {
+            requestedUser.lockedId = requestedUser.lockedId.filter((lockedId) => lockedId !== otherId);
+            yield requestedUser.save();
+        }
         socket.emit('createConversation', { success: true });
     }
     catch (error) {
