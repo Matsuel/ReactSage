@@ -14,12 +14,14 @@ const User_1 = require("../scheme/User");
 const searchUsers = (data, socket) => __awaiter(void 0, void 0, void 0, function* () {
     const { id, search } = data;
     try {
-        let users = yield User_1.UserModel.find({ username: { $regex: search, $options: 'i' } }).select('username phone _id picture');
+        let users = yield User_1.UserModel.find({ username: { $regex: search, $options: 'i' } }).select('username phone _id picture lockedId');
         // supprimer l'utilisateur courant de la liste
         // parmis les utilisateurs trouvés il faut supprimer les utilisateurs qui sont déjà dans les conversations de l'utilisateur courant
         const conversations = yield conversation_1.ConversationModel.find({ usersId: { $in: [id] } }).select('usersId');
         const usersId = conversations.map(conversation => conversation.usersId).flat();
         users = users.filter(user => user._id.toString() !== id && !usersId.includes(user._id.toString()));
+        // exclure les utilisateurs dans lequel l'utilisateur courant est dans lockedId
+        users = users.filter(user => !user.lockedId.includes(id));
         socket.emit('searchUsers', { success: true, users });
     }
     catch (error) {
