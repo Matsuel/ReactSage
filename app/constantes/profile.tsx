@@ -21,7 +21,7 @@ export const profileDatas = {
     "1": [
         { text: "Aide", icon: <Help color={StyleConst.TextColor} width={iconWidth} /> },
         { text: "Compte", icon: <UserIcon color={StyleConst.TextColor} width={iconWidth} /> },
-        { text: "Apparence", icon: <Paint color={StyleConst.TextColor} width={iconWidth} /> },
+        { text: "Apparence", icon: <Paint color={StyleConst.TextColor} width={iconWidth} />, onPress: () => router.push({ pathname: "/editApparence" }) },
         { text: "Gérer les notifications", icon: <NotificationsIcon color={StyleConst.TextColor} width={iconWidth} /> },
         { text: "Synchronisation", icon: <Cloud color={StyleConst.TextColor} width={iconWidth} /> },
     ] as ProfileData[],

@@ -24,7 +24,7 @@ const Profile = () => {
             <Text style={styles.username}>{username}</Text>
             <View style={styles.profilePart}>
                 {profileDatas["1"].map((data, index) => (
-                    <ProfileButton key={index} text={data.text} icon={data.icon} />
+                    <ProfileButton key={index} text={data.text} icon={data.icon} onPress={data.onPress} />
                 ))}
             </View>
 
