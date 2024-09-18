@@ -9,6 +9,7 @@ import Message from './Components/Message'
 import * as Haptics from 'expo-haptics'
 import Typing from './Components/Typing'
 import ConversationHeader from './Components/ConversationHeader'
+import { useHaptics } from './providers/hapticsProvider'
 
 const ActiveConversation = () => {
 
@@ -21,6 +22,8 @@ const ActiveConversation = () => {
     const [usernameTyping, setUsernameTyping] = useState<string[]>([])
 
     const typingTimeout = useRef<NodeJS.Timeout>()
+
+    const hapticsEnabled =  useHaptics()
 
 
     useEffect(() => {
@@ -64,7 +67,7 @@ const ActiveConversation = () => {
     }, [usernameTyping])
 
     const sendMessage = () => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        if (hapticsEnabled === 'true') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         if (message.trim() === '') return
         emitAndListenEvent('sendMessage', { id, conversationId, message }, (data) => {
             if (data.success) {

@@ -12,6 +12,7 @@ import { emitAndListenEvent } from './utils/events'
 import { storeSecureData } from './utils/storeData'
 import { getSecureData } from './utils/getData'
 import * as StyleConst from './constantes/stylesConst'
+import { useHaptics } from './providers/hapticsProvider'
 
 const inactive = () => {
   const [code, setCode] = useState<number[]>([])
@@ -20,17 +21,18 @@ const inactive = () => {
   const params = useLocalSearchParams()
   const { phone, type } = params
   const [userCode, setUserCode] = useState<string>("")
+  const hapticsEnabled = useHaptics()
 
 
   const onNumberPress = (number: number) => {
     if (code.length < 6) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      if (hapticsEnabled === 'true') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       setCode([...code, number])
     }
   }
 
   const onBackSpace = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (hapticsEnabled === 'true') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setCode(code.slice(0, -1))
   }
 
@@ -50,7 +52,6 @@ const inactive = () => {
     if (code.length === 6) {
       if (type === 'register') {
         emitAndListenEvent('register', { phone, pin: code.join('') }, (data) => {
-          console.log(data);
           if (data.success === true) {
             storeSecureData('phone', phone)
             storeSecureData('pin', code.join(''))
@@ -66,7 +67,6 @@ const inactive = () => {
       }
       else if (type === 'login') {
         emitAndListenEvent('checkPin', { phone, pin: code.join('') }, (data) => {
-          console.log(data);
 
           if (data.success === true) {
             storeSecureData('phone', phone)
@@ -84,7 +84,7 @@ const inactive = () => {
               withRepeat(withTiming(OFFSET, { duration: TIME }), 4, true),
               withTiming(0, { duration: TIME / 2 })
             )
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+            if (hapticsEnabled === 'true') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
             setCode([])
           }
         })
@@ -100,7 +100,7 @@ const inactive = () => {
           withRepeat(withTiming(OFFSET, { duration: TIME }), 4, true),
           withTiming(0, { duration: TIME / 2 })
         )
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
+        if (hapticsEnabled === 'true') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error)
         setCode([])
       }
     }

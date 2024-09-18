@@ -3,6 +3,7 @@ import { Animated, Text, Pressable, PressableProps } from 'react-native'
 import * as Haptics from 'expo-haptics';
 import RightArrow from '../../assets/RightArrow';
 import { styles } from './Button.style';
+import { useHaptics } from '../../providers/hapticsProvider';
 
 interface ButtonProps extends PressableProps {
     variant?: 'default' | 'primary' | 'light' | 'disabled' | 'transparentLight' | 'transparentDark'
@@ -19,6 +20,8 @@ const Button = ({
     ...props
 }: ButtonProps) => {
 
+    const hapticsEnabled = useHaptics()
+
     if (props.disabled && props.disabled === true) {
         variant = 'disabled'
     }
@@ -26,8 +29,7 @@ const Button = ({
     const scaleAnim = useRef(new Animated.Value(1)).current;
 
     const handlePress = () => {
-
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        if (hapticsEnabled === 'true') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
         Animated.sequence([
             Animated.spring(scaleAnim, {

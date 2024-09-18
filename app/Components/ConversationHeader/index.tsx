@@ -4,6 +4,7 @@ import { styles } from './ConversationHeader.style'
 import Avatar from '../Avatar';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { useHaptics } from '../../providers/hapticsProvider';
 
 interface ConversationHeaderProps {
     picture: string;
@@ -21,8 +22,10 @@ const ConversationHeader = ({
 
     const router = useRouter()
 
+    const hapticsEnabled = useHaptics()
+
     const goToInfos = () => {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        if (hapticsEnabled === 'true') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         router.push({ pathname: "conversationInfos", params: { conversationId, id, picture, name } })
     }
 

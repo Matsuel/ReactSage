@@ -11,6 +11,7 @@ import { storeSecureData } from './utils/storeData'
 import InputOtp from './Components/InputOtp'
 import { emitAndListenEvent } from './utils/events'
 import * as StyleConst from './constantes/stylesConst'
+import { useHaptics } from './providers/hapticsProvider'
 
 const Otp = () => {
 
@@ -25,8 +26,10 @@ const Otp = () => {
 
     const isCompleteCode = code.every(char => char !== "")
 
+    const hapticsEnabled = useHaptics()
+
     const handleCode = (index: number) => (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        if (hapticsEnabled === 'true') Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
         const newCode = [...code]
 
         if (e.nativeEvent.key === 'Backspace') {

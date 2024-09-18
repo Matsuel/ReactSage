@@ -5,6 +5,7 @@ import Avatar from '../Avatar'
 import { useRouter } from 'expo-router'
 import { formatDate } from '../../utils/formatDate'
 import * as Haptics from 'expo-haptics'
+import { useHaptics } from '../../providers/hapticsProvider'
 
 interface ConversationComponentProps {
     usersId: string[]
@@ -37,9 +38,10 @@ const ConversationComponent = ({
 }: ConversationComponentProps) => {
 
     const router = useRouter()
+    const hapticsEnabled = useHaptics()
 
     const redirectToConversation = () => {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        if (hapticsEnabled === 'true') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         router.push({ pathname: 'activeConversation', params: { conversationId: _id, picture, name, id } })
     }
 

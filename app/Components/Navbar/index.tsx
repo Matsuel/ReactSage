@@ -6,6 +6,7 @@ import Avatar from '../Avatar'
 import NewConversation from '../../assets/NewConversation'
 import { useRouter } from 'expo-router'
 import * as Haptics from 'expo-haptics'
+import { useHaptics } from '../../providers/hapticsProvider'
 
 const Navbar = () => {
 
@@ -16,13 +17,15 @@ const Navbar = () => {
 
     const { data: userId } = useStorageData('id')
 
+    const hapticsEnabled = useHaptics()
+
     const goToProfile = () => {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        if (hapticsEnabled === 'true') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         router.push({ pathname: "/profile", params: { username, id: userId } })
     }
 
     const goToCreateConversation = () => {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        if (hapticsEnabled === 'true') Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         router.push({ pathname: "/createconversation", params: { id: userId } })
     }
 

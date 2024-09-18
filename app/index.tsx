@@ -7,7 +7,6 @@ import Button from './Components/Button'
 import * as StyleConst from './constantes/stylesConst'
 import { useStorageData } from './hooks/useStorageData'
 import { emitAndListenEvent } from './utils/events'
-import { deleteSecureData } from './utils/deleteData'
 
 const Index = () => {
 
@@ -17,7 +16,6 @@ const Index = () => {
   useEffect(() => {
     const fetchDatas = async () => {
       if (loading) return
-      // await deleteSecureData('login')
       const login = await getSecureData('login')
       setTimeout(() => {
         if (login === "true") {
