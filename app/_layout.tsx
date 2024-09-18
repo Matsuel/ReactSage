@@ -20,6 +20,7 @@ export default function Layout() {
                 <Stack.Screen name='conversationInfos' options={{ headerShown: false, gestureEnabled: true, presentation: "modal", contentStyle: StyleConst.modalStyles.container }} />
                 <Stack.Screen name='confirmModal' options={{ headerShown: false, gestureEnabled: true, presentation: "modal", contentStyle: StyleConst.modalStyles.container }} />
                 <Stack.Screen name='editApparence' options={{ headerShown: false, gestureEnabled: true, presentation: "modal", contentStyle: StyleConst.modalStyles.container }} />
+                <Stack.Screen name='searchConversation' options={{ headerShown: false, gestureEnabled: true, presentation: "modal", contentStyle: StyleConst.modalStyles.container }} />
             </Stack>
         </HapticsProvider>
     )

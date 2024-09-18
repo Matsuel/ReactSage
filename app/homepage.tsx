@@ -70,7 +70,7 @@ const Home = () => {
                 }
             />
             <View style={styles.btns}>
-                <Button variant='light' content="Recherche" icon={<Search color='#000' width={25} />} />
+                <Button variant='light' content="Recherche" icon={<Search color='#000' width={25} />} onPress={() => router.push({ pathname: "/searchConversation" })} />
                 <Button onPress={() => router.push({ pathname: "/createconversation", params: { id: userId } })} variant='light' content="Créer" icon={<NewConversation color='#000' width={25} />} />
             </View>
         </View>
