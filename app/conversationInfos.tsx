@@ -37,30 +37,6 @@ const conversationInfos = () => {
     })
   }, [])
 
-  const blockParticipant = () => {
-    ActionSheetIOS.showActionSheetWithOptions(
-      {
-        options: ['Annuler', 'Bloquer le correspondant'],
-        destructiveButtonIndex: 1,
-        cancelButtonIndex: 0,
-      },
-      (buttonIndex) => {
-        if (buttonIndex === 1) {
-          const userToLock = usersInfos.filter((user: any) => user.id !== id)[0].id
-          emitAndListenEvent('blockParticipant', { conversationId, id, userToLock }, (data) => {
-            if (data.success) {
-              emitAndListenEvent('deleteConversation', { id, conversationId }, (data) => {
-                if (data.success) {
-                  reset({ index: 0, routes: [{ name: 'homepage' as never }] })
-                }
-              })
-            }
-          })
-        }
-      }
-    )
-  }
-
   return (
     <View style={styles.container}>
       <ModalIndicator />
@@ -81,7 +57,7 @@ const conversationInfos = () => {
       </View>
 
       <View style={styles.InfosContainer}>
-        <TouchableOpacity key={"block"} style={styles.infos} onPress={blockParticipant}>
+        <TouchableOpacity key={"block"} style={styles.infos} onPress={() => router.push({ pathname: "/confirmModal", params: { title: "Bloquer le correspondant", subtitle: "Êtes-vous sûr de vouloir bloquer ce correspondant ?", conversationId, userToLock: usersInfos.filter((user: any) => user.id !== id)[0].id } })}>
           <Text style={[styles.text, { color: "#007AFF" }]}>Bloquer le correspondant</Text>
         </TouchableOpacity>
         <TouchableOpacity key={"delete"} style={styles.infos} onPress={() => router.push({ pathname: "/confirmModal", params: { title: "Supprimer la conversation", subtitle: "Êtes-vous sûr de vouloir supprimer cette conversation ?", conversationId } })}>

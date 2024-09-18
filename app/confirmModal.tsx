@@ -13,7 +13,7 @@ import { emitAndListenEvent } from './utils/events'
 const ModalConfirm = () => {
 
     const params = useLocalSearchParams()
-    const { title, subtitle, conversationId } = params
+    const { title, subtitle, conversationId, userToLock } = params
 
     const { reset } = useNavigation()
 
@@ -22,7 +22,7 @@ const ModalConfirm = () => {
     const deleteAccount = async () => {
         emitAndListenEvent('deleteAccount', { id }, async (data) => {
             console.log(data)
-            if(data.success) {
+            if (data.success) {
                 await disconnect()
             }
         })
@@ -45,13 +45,23 @@ const ModalConfirm = () => {
         })
     }
 
+    const blockParticipant = async () => {
+        emitAndListenEvent('blockParticipant', { conversationId, id, userToLock }, async (data) => {
+            if (data.success) {
+                await deleteConversation()
+            }
+        })
+    }
+
     const onPress = async () => {
-        if(title as string === 'Suppression du compte') {
+        if (title as string === 'Suppression du compte') {
             await deleteAccount()
         } else if (title as string === 'Déconnexion') {
             await disconnect()
         } else if (title as string === 'Supprimer la conversation') {
             await deleteConversation()
+        } else if (title as string === 'Bloquer le correspondant') {
+            await blockParticipant()
         } else {
             console.log('error')
         }
